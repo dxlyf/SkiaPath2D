@@ -119,3 +119,11 @@ gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);  
 gl.disableVertexAttribArray(0);  
 ```
+
+## PathStore效果
+通过PathStroker 生成的描边轮廓与原生几乎一致
+![在这里插入图片描述](./public/433333f65ce248f48a9004c8b0e9c29f.png)
+## RoundRect
+![在这里插入图片描述](./public/3fc7f55771044a6f828e64f88bc25a2e.png)
+## ArcTo
+![在这里插入图片描述](./public/56e0dcc89f394573a79e62b709cb563c.png)
