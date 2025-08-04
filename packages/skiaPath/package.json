@@ -1,0 +1,48 @@
+{
+    "name": "skia-path2d",
+    "private": false,
+    "version": "1.0.0",
+    "type": "module",
+    "files": [
+        "./dist",
+        "./index.js",
+        "./package.json"
+    ],
+    "main": "index.js",
+    "module": "dist/skia-path2d.es.js",
+    "unpkg": "dist/skia-path2d.umd.js",
+    "jsdelivr": "dist/skia-path2d.umd.js",
+    "exports": {
+        ".": {
+          "import": "./dist/skia-path2d.es.js",
+          "require": "./build/skia-path2d.cjs.js"
+        }
+      },
+    "types": "dist/index.d.ts",
+    "description": "Extract the core code related to Path2D, PathStrore, and isPointInPath from Skia and rewrite it with typescript",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dxlyf/SkiaPath2D.git"
+    },
+    "keywords": [
+        "vue"
+    ],
+    "author": "fanyonglong",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/dxlyf/SkiaPath2D/issues"
+    },
+    "homepage": "https://github.com/dxlyf/SkiaPath2D/tree/main/packages/path#readme",
+    "scripts": {
+        "dev": "vite dev --port=8698",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "peerDependencies": {
+        "vite": "^7.0.4",
+        "typescript": "*"
+    },
+    "devDependencies": {
+
+    }
+}

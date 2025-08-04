@@ -1,23 +1,20 @@
-Extract the core code related to Path2D, PathStore, and isPointInPath from the Skia source code, and rewrite it in TypeScript.  
+# SkiaPath2D
+从Skia源码中提取Path2D、PathStrore和isPointInPath相关的核心代码，并用typescript重写
+PathBuilder:是核心类,移植自Skia的PathBuilder类，里面部分方法有重写，去掉一些冗余代码，简化逻辑。
 
-**PathBuilder**: This is the core class, ported from Skia's PathBuilder class. Some methods have been rewritten, redundant code has been removed, and the logic has been simplified.  
-
-Additionally, a **Path2D** object is added to ensure compatibility with the browser's native Path2D API. The rendering behavior is tested to be consistent with the native Path2D, including support for parameters such as `startAngle`, `sweepAngle`, and `rotationAngle` in methods like `arcTo`, `arc`, and `ellipse`.  
-
-**New methods added to Path2D**:  
-- `ellipseArc`  
-- `conicTo`  
-- `contains` (for point-in-path detection)  
-
-The implementation ensures that the behavior matches the native Path2D while extending functionality where needed.
+别外添加Path2D对象，用来和浏览器的原生Path2D对象兼容。测试绘制效果与Path2D是一致的，包括像arcTo,arc,ellipse，的startAngle,sweepAngle,rotationAngle参数的一致性支持。
 
 
-## bounds
+
+Path2D增加方法：ellipseArc、conicTo、contains
+
+
+## 包围盒
 ```typescript
     path.getBounds() // 包围盒包含曲线的控制点
     path.computeTightBounds()// 不包含曲线控制点
 ```
-## hitTest
+## 命中测试
 ```typescript
     // 判断点是否在填充区域内
     path.contains(x,y,"evenodd" | "nonzero") 
@@ -31,7 +28,7 @@ The implementation ensures that the behavior matches the native Path2D while ext
     })
     newPath.contains(x,y) 
 ```
-## Use In Canvas
+## 在Canvas中使用
 ```typescript
     import {Path2D,PathStroker,PathBuilder} from 'skia-path2d'
 
@@ -45,7 +42,7 @@ The implementation ensures that the behavior matches the native Path2D while ext
     path2d.toCanvas(ctx)
 
 ```
-## Use In Svg
+## 在Svg中使用
 ```typescript
 let svgCmd='M100 100A50 60 0 1 1 100 100 Z'
     let path=new Path2D(svgCmd)
@@ -56,9 +53,9 @@ let svgCmd='M100 100A50 60 0 1 1 100 100 Z'
     // svg
     <path d=`${svgCmd}` />
 ```
-## Use In WebGL
+## 在Webgl中使用
 ```typescript
-    import {tesselate} form 'tess2'
+     import {tesselate} form 'tess2'
     let path=new Path2D()
     path.arc(100,100,100,0,Math.PI*2,false)
 

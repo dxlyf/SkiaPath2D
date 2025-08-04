@@ -1,0 +1,4 @@
+packages:
+  # 包含所有 packages 目录下的子项目
+  - 'packages/*'
+  

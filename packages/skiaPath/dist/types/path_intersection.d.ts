@@ -1,0 +1,11 @@
+import { Ref } from './util';
+import { Point } from './point';
+declare function winding_line(pts: Point[], x: number, y: number, onCurveCount: Ref<number>): number;
+declare function winding_quad(pts: Point[], x: number, y: number, onCurveCount: Ref<number>): number;
+declare function winding_cubic(pts: Point[], x: number, y: number, onCurveCount: Ref<number>): number;
+declare function winding_conic(pts: Point[], x: number, y: number, weight: number, onCurveCount: Ref<number>): number;
+declare function tangent_line(pts: Point[], x: number, y: number, tangents: Point[]): void;
+declare function tangent_quad(pts: Point[], x: number, y: number, tangents: Point[]): void;
+declare function tangent_cubic(pts: Point[], x: number, y: number, tangents: Point[]): void;
+declare function tangent_conic(pts: Point[], x: number, y: number, w: number, tangents: Point[]): void;
+export { winding_line, winding_conic, winding_cubic, winding_quad, tangent_conic, tangent_cubic, tangent_line, tangent_quad };

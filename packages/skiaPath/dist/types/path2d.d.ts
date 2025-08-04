@@ -1,0 +1,27 @@
+import { PathBuilder } from './path_builder';
+import { Matrix2D } from './matrix';
+export declare class Path2D {
+    static default(): Path2D;
+    static fromSvgPath(d: string): Path2D;
+    _path: PathBuilder;
+    constructor(pathOrCmd?: string | Path2D);
+    fromSvgPath(d: string): void;
+    getPath(): PathBuilder;
+    addPath(path2d: Path2D, transform?: Matrix2D): void;
+    contains(x: number, y: number, fillRule?: CanvasFillRule): number | boolean;
+    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, ccw?: boolean): void;
+    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
+    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
+    closePath(): void;
+    conicTo(x1: number, y1: number, x2: number, y2: number, weight: number): void;
+    ellipseArc(x1: number, y1: number, x2: number, y2: number, rx: number, ry: number, xAxisRotation: number, largeArcFlag: boolean, sweepFlag: boolean): void;
+    roundRect(x: number, y: number, width: number, height: number, radii?: any): void;
+    ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, ccw?: boolean): void;
+    lineTo(x: number, y: number): void;
+    moveTo(x: number, y: number): void;
+    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
+    rect(x: number, y: number, width: number, height: number): void;
+    toCanvas(ctxOrPath: globalThis.Path2D): void;
+    toPath2D(): globalThis.Path2D;
+    toSvgPath(): string;
+}

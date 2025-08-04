@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "skiaPath": ["packages/skiaPath"]
+    },
+  },
+  "references": [
+    { "path": "packages/skiaPath" }
+  ]
+}
