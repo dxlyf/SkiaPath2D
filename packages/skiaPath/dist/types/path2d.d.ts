@@ -24,7 +24,7 @@ export declare class Path2D {
     rect(x: number, y: number, width: number, height: number): void;
     getBounds(): Rect;
     computeTightBounds(): Rect;
-    toCanvas(ctxOrPath: globalThis.Path2D): void;
+    toCanvas(ctxOrPath: globalThis.Path2D | globalThis.CanvasRenderingContext2D): void;
     toPath2D(): globalThis.Path2D;
     toSvgPath(): string;
 }

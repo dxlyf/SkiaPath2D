@@ -1774,8 +1774,8 @@ export class PathStroker {
 
 
 
-    stroke(path: PathBuilder, paint: { strokeWidth: number; miterLimit: number; lineCap: LineCap; lineJoin: LineJoin }) {
-        return this.strokeInner(path, paint.strokeWidth, paint.miterLimit, paint.lineCap, paint.lineJoin, this.res_scale)
+    stroke(path: PathBuilder, paint: { strokeWidth: number; miterLimit?: number; lineCap?: LineCap; lineJoin?: LineJoin }) {
+        return this.strokeInner(path, paint.strokeWidth, paint.miterLimit??10, paint.lineCap??LineCap.Butt, paint.lineJoin??LineJoin.Miter, this.res_scale)
     }
     strokeInner(path: PathBuilder,
         width: number,

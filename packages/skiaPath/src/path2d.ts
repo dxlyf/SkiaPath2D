@@ -301,7 +301,7 @@ export class Path2D {
     computeTightBounds(){
         return this._path.computeTightBounds()
     }
-    toCanvas(ctxOrPath:globalThis.Path2D) {
+    toCanvas(ctxOrPath:globalThis.Path2D|globalThis.CanvasRenderingContext2D) {
         return this._path.toCanvas(ctxOrPath)
     }
     toPath2D() {

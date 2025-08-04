@@ -5093,7 +5093,7 @@ class Pr {
     l.setRayPoints(i, o, n, r);
   }
   stroke(t, e) {
-    return this.strokeInner(t, e.strokeWidth, e.miterLimit, e.lineCap, e.lineJoin, this.res_scale);
+    return this.strokeInner(t, e.strokeWidth, e.miterLimit ?? 10, e.lineCap ?? "butt", e.lineJoin ?? "miter", this.res_scale);
   }
   strokeInner(t, e, i, n, r, l) {
     const o = this;

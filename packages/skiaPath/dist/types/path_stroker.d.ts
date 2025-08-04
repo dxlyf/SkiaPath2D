@@ -146,9 +146,9 @@ export declare class PathStroker {
     cubicPerpRay(cubic: Vector2[], t: number, t_pt: Vector2, on_pt: Vector2, tangent?: Vector2): void;
     stroke(path: PathBuilder, paint: {
         strokeWidth: number;
-        miterLimit: number;
-        lineCap: LineCap;
-        lineJoin: LineJoin;
+        miterLimit?: number;
+        lineCap?: LineCap;
+        lineJoin?: LineJoin;
     }): PathBuilder;
     strokeInner(path: PathBuilder, width: number, miterLimit: number, lineCap: LineCap, lineJoin: LineJoin, resScale: number): PathBuilder;
     finish(is_line: boolean): PathBuilder;
