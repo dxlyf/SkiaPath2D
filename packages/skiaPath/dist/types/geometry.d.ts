@@ -142,4 +142,9 @@ declare function SkComputeQuadExtremas(src: Point[], extremas: Point[]): number;
  */
 declare function SkComputeCubicExtremas(src: Point[], extremas: Point[]): number;
 declare function SkComputeConicExtremas(src: Point[], w: number, extremas: Point[]): number;
-export { SkConic, SkFindCubicExtrema, SkFindCubicMaxCurvature, SkFindBisector, SkFindCubicCusp, SkFindCubicInflections, SkFindCubicMidTangent, SkFindQuadExtrema, SkFindQuadMaxCurvature, SkFindQuadMidTangent, SkFindUnitQuadRoots, SkChopCubicAt_3, SkChopCubicAt_4, SkChopCubicAt_5, SkChopQuadAt, SkEvalQuadAt, SkEvalCubicAt, SkChopCubicAtHalf, SkChopCubicAtXExtrema, SkChopCubicAtYExtrema, SkChopQuadAtYExtrema, SkEvalQuadTangentAt, SkComputeQuadExtremas, SkComputeCubicExtremas, SkComputeConicExtremas, SkEvalCubicTangentAt, SkEvalCubicPosAt };
+declare class SkAutoConicToQuads {
+    fQuadCount: number;
+    computeQuads(conic: SkConic, tol: number): Point[];
+    computeQuads(pts: Point[], weight: number, tol: number): Point[];
+}
+export { SkAutoConicToQuads, SkConic, SkFindCubicExtrema, SkFindCubicMaxCurvature, SkFindBisector, SkFindCubicCusp, SkFindCubicInflections, SkFindCubicMidTangent, SkFindQuadExtrema, SkFindQuadMaxCurvature, SkFindQuadMidTangent, SkFindUnitQuadRoots, SkChopCubicAt_3, SkChopCubicAt_4, SkChopCubicAt_5, SkChopQuadAt, SkEvalQuadAt, SkEvalCubicAt, SkChopCubicAtHalf, SkChopCubicAtXExtrema, SkChopCubicAtYExtrema, SkChopQuadAtYExtrema, SkEvalQuadTangentAt, SkComputeQuadExtremas, SkComputeCubicExtremas, SkComputeConicExtremas, SkEvalCubicTangentAt, SkEvalCubicPosAt };

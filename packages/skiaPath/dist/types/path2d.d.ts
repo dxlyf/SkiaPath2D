@@ -1,4 +1,5 @@
 import { PathBuilder } from './path_builder';
+import { Rect } from './rect';
 import { Matrix2D } from './matrix';
 export declare class Path2D {
     static default(): Path2D;
@@ -21,6 +22,8 @@ export declare class Path2D {
     moveTo(x: number, y: number): void;
     quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
     rect(x: number, y: number, width: number, height: number): void;
+    getBounds(): Rect;
+    computeTightBounds(): Rect;
     toCanvas(ctxOrPath: globalThis.Path2D): void;
     toPath2D(): globalThis.Path2D;
     toSvgPath(): string;

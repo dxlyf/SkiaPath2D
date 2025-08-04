@@ -1,11 +1,14 @@
 
+// 转换成js 
+
 import { Point, Point3D } from "./point";
-import { FloatPoint, Ref, PointerArray, sqrt, fabs, sk_ieee_float_divide, max, clamp, sk_double_to_float } from "./util";
+import { FloatPoint, Ref, PointerArray, sqrt, fabs, swap, sk_ieee_float_divide, min, max, clamp, lerp, sk_double_to_float, sk_ieee_double_divide } from "./util";
 import { SkScalarIsNaN, SkScalarCos, SkScalarSqrt, SkScalarACos, SkScalarInvert, SkScalarNearlyZero, SkScalarPow, SkDoubleToScalar, SK_ScalarPI, SkScalarIsFinite, SkScalarAbs, SkScalarInterp, SkScalarsAreFinite, SK_ScalarHalf, SK_Scalar1, SkScalarLog2, SkScalarCeilToInt, SK_ScalarNearlyZero, SK_ScalarRoot2Over2 } from './scalar'
 import { SkBezierCubic } from "./bezier_cubic";
 import { SkCubics } from "./cubics";
 import { Rect } from "./rect";
 import { Matrix2D } from "./matrix";
+
 
 export const kMaxConicToQuadPOW2 = 5
 export const kMaxConicsForArc = 5
@@ -177,7 +180,7 @@ function SkChopQuadAt(src: Point[], dst: Point[], t: number) {
     dst[4] = to_point(p2);
 }
 function AreFinite(array: Point[], count: number = array.length) {
-    for (let i = 0; i < count; ++i) {
+    for (let i = 0; i < array.length&&count; ++i) {
         if (!SkScalarIsFinite(array[i].x) || !SkScalarIsFinite(array[i].y)) {
             return false;
         }
@@ -1587,12 +1590,12 @@ class SkConic {
         const p2 = to_point(t0.clone().mulScalar(0.5).add(t1).add(t2.clone().mulScalar(0.5)));
 
 
-        dst[0].fPts[0] = fPts[0];
-        dst[0].fPts[1] = p1;
-        dst[0].fPts[2] = p2;
-        dst[1].fPts[0] = p2;
-        dst[1].fPts[1] = p3;
-        dst[1].fPts[2] = fPts[2];
+        dst[0].fPts[0].copy(fPts[0]);
+        dst[0].fPts[1].copy(p1);
+        dst[0].fPts[2].copy(p2);
+        dst[1].fPts[0].copy(p2);
+        dst[1].fPts[1].copy(p3);
+        dst[1].fPts[2].copy(fPts[2]);
 
         // Update w.
         dst[0].fW = dst[1].fW = subdivide_w_value(fW);
@@ -1627,7 +1630,7 @@ class SkConic {
         let y = k * (fPts[0].y - 2 * fPts[1].y + fPts[2].y);
 
         let error = SkScalarSqrt(x * x + y * y);
-        let pow2;
+        let pow2=0;
         for (pow2 = 0; pow2 < kMaxConicToQuadPOW2; ++pow2) {
             if (error <= tol) {
                 break;
@@ -1656,12 +1659,15 @@ class SkConic {
 
     chopIntoQuadsPOW2(pts: PointerArray<Point>, pow2: number) {
         const fPts = this.fPts, fW = this.fW;
-        pts.data = fPts
+        pts.get(0).copy(fPts[0]);
 
+        let prevFirst=pts.curIndex
         const commonFinitePtCheck = () => {
             const quadCount = 1 << pow2;
             const ptCount = 2 * quadCount + 1;
-            if (!AreFinite(pts.data, ptCount)) {
+            let diff=pts.curIndex-prevFirst
+            console.assert(diff===ptCount,'diff!==ptCount')
+            if (pts.data.slice(pts.curIndex,pts.curIndex+ptCount).some(d=>!d.isFinite())) {
                 // if we generated a non-finite, pin ourselves to the middle of the hull,
                 // as our first and last are already on the first/last pts of the hull.
                 for (let i = 1; i < ptCount - 1; ++i) {
@@ -1685,10 +1691,13 @@ class SkConic {
                 pow2 = 1;
 
                 commonFinitePtCheck();
+
+                return 1<<pow2
             }
         }
-
-
+        pts.next()
+        subdivide(this,pts, pow2);
+        commonFinitePtCheck()
         return 1 << pow2;
     }
 
@@ -1795,7 +1804,7 @@ class SkConic {
     }
 
     TransformW(pts: Point[], w: number, matrix: Matrix2D) {
-       return w
+        return w
         // if (!matrix.hasPerspective()) {
         //     return w;
         // }
@@ -1914,19 +1923,25 @@ class SkConic {
  */
 function SkComputeQuadExtremas(src: Point[], extremas: Point[]) {
     let ts: number[] = [], tmp: number[] = [];
-    let n = 0
-    if (SkFindQuadExtrema(src[0].x, src[1].x, src[2].x, tmp) > 0) {
-        ts[n] = tmp[0]
-        n++
+    let n = 0,tmp_n=0
+    tmp_n=SkFindQuadExtrema(src[0].x, src[1].x, src[2].x, tmp)
+    if (tmp_n> 0) {
+        for(let i=0,j=n;i<tmp_n;i++,j++){
+            ts[j]=tmp[i]
+        }
+        n=tmp_n
     }
-    if (SkFindQuadExtrema(src[0].y, src[1].y, src[2].y, tmp) > 0) {
-        ts[n] = tmp[0]
-        n++
+    tmp_n=SkFindQuadExtrema(src[0].y, src[1].y, src[2].y, tmp)
+    if (tmp_n > 0) {
+        for(let i=0,j=n;i<tmp_n;i++,j++){
+            ts[j]=tmp[i]
+        }
+        n+=tmp_n
     }
     for (let i = 0; i < n; ++i) {
-        extremas[i] = SkEvalQuadAt(src, ts[i])!;
+        extremas[i]=SkEvalQuadAt(src, ts[i])!;
     }
-    extremas[n] = src[2];
+    extremas[n].copy(src[2]);
     return n + 1;
 }
 
@@ -1937,21 +1952,27 @@ function SkComputeQuadExtremas(src: Point[], extremas: Point[]) {
  * @returns  极值点个数
  */
 function SkComputeCubicExtremas(src: Point[], extremas: Point[]) {
-    let ts: number[] = [], tmp: number[] = [];
-    let n = 0
-    if (SkFindCubicExtrema(src[0].x, src[1].x, src[2].x, src[3].x, tmp) > 0) {
-        ts[n] = tmp[0]
-        n++
+    let ts: number[] = [0,0,0,0], tmp: number[] = [];
+    let n = 0,tmp_n=0
+    tmp_n=SkFindCubicExtrema(src[0].x, src[1].x, src[2].x, src[3].x, tmp)
+    if (tmp_n > 0) {
+        for(let i=0,j=n;i<tmp_n;i++,j++){
+            ts[j]=tmp[i]
+        }
+        n=tmp_n
     }
-    if (SkFindCubicExtrema(src[0].y, src[1].y, src[2].y, src[3].y, tmp) > 0) {
-        ts[n] = tmp[0]
-        n++
+    tmp_n=SkFindCubicExtrema(src[0].y, src[1].y, src[2].y, src[3].y, tmp)
+   
+    if ( tmp_n> 0) {
+        for(let i=0,j=n;i<tmp_n;i++,j++){
+            ts[j]=tmp[i]
+        }
+        n+=tmp_n
     }
     for (let i = 0; i < n; ++i) {
-        extremas[i] = extremas[i] || Point.default()
         SkEvalCubicAt(src, ts[i], extremas[i], null, null);
     }
-    extremas[n] = src[3];
+    extremas[n].copy(src[3]);
     return n + 1;
 }
 function SkComputeConicExtremas(src: Point[], w: number, extremas: Point[]) {
@@ -1964,10 +1985,67 @@ function SkComputeConicExtremas(src: Point[], w: number, extremas: Point[]) {
     for (let i = 0; i < n; ++i) {
         extremas[i] = conic.evalAt(ts[i].value);
     }
-    extremas[n] = src[2];
+    extremas[n].copy(src[2]);
     return n + 1;
 }
+function between(a:number,b:number,c:number){
+    return (a - b) * (c - b) <= 0;
+}
+function subdivide(src:SkConic,pts:PointerArray<Point>,level:number){
+    if(0===level){
+        pts.get(0).copy(src.fPts[1])
+        pts.get(1).copy(src.fPts[2])
+        pts.next(2)
+        return pts;
+    }else{
+        const dst=SkConic.make(2)
+        src.chop(dst)
+        const startY=src.fPts[0].y
+        let endY=src.fPts[2].y
+        if(between(startY,src.fPts[1].y,endY)){
+            let midY=dst[0].fPts[2].y;
+            if(!between(startY,midY,endY)){
+                let closerY = Math.abs(midY - startY) < Math.abs(midY - endY) ? startY : endY;
+                dst[0].fPts[2].y = dst[1].fPts[0].y = closerY;
+
+            }
+            if(!between(startY,dst[0].fPts[1].y,dst[0].fPts[2].y)){
+                dst[0].fPts[1].y = startY;
+
+            }
+            if(!between(dst[1].fPts[0].y,dst[1].fPts[1].y,endY)){
+                dst[1].fPts[1].y = endY;
+            }
+        }
+        --level;
+        subdivide(dst[0], pts, level);
+
+        return  subdivide(dst[1], pts, level);
+    }
+}
+class SkAutoConicToQuads{
+    fQuadCount=0
+    computeQuads(conic: SkConic, tol: number):Point[]
+    computeQuads(pts:Point[],weight:number, tol: number):Point[]
+    computeQuads(conicOrPts: SkConic|Point[],weight:number, tol?: number):Point[] {
+        if(conicOrPts instanceof SkConic){
+            tol=weight
+            let pow2=conicOrPts.computeQuadPOW2(tol)
+            this.fQuadCount = 1 << pow2;
+            let pts = PointerArray.from<Point>(Point.make(1+2*this.fQuadCount))
+            this.fQuadCount = conicOrPts.chopIntoQuadsPOW2(pts, pow2);
+            return pts.data
+        }else{
+            let conic=new SkConic(conicOrPts,weight)
+            return this.computeQuads(conic,tol!)
+        }
+    }
+    
+}
+
+
 export {
+    SkAutoConicToQuads,
     SkConic,
     SkFindCubicExtrema,
     SkFindCubicMaxCurvature,

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>skia-path2d测试</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.umd.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/skia-path2d@1.3.0/dist/skia-path2d.umd.min.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .native {}
+
+        .wrap {
+            display: flex;
+            gap: 15px;
+        }
+
+        .wrap>div {}
+
+        h3 {
+            text-align: center;
+        }
+
+        canvas {
+            background-color: #efefef;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class='native-path2d'>
+            <h3>native-path2d</h3>
+            <canvas></canvas>
+        </div>
+        <div class='skia-path2d'>
+            <h3>skia-path2d</h3>
+            <canvas></canvas>
+        </div>
+    </div>
+    <script>
+        function setSize(canvas, dpr, width, height) {
+            canvas.width = width * dpr
+            canvas.height = height * dpr
+            canvas.style.width = width + 'px'
+            canvas.style.height = height + 'px'
+
+        }
+        const canvas0 = document.querySelector('.native-path2d canvas')
+        const ctx0 = canvas0.getContext('2d')
+        const canvas1 = document.querySelector('.skia-path2d canvas')
+        const ctx1 = canvas1.getContext('2d')
+
+        const dpr = window.devicePixelRatio || 1
+
+        class BaseExample {
+            settings = {}
+            constructor(parent) {
+                this.parent = parent
+
+            }
+            createGui(gui) {
+                Object.keys(this.settings).forEach(key => {
+                    gui.add(this.settings, key).onChange(this.onChange)
+                    Object.defineProperty(this, key, {
+                        get: () => {
+                            return this.settings[key]
+                        }
+                    })
+                })
+
+            }
+            onChange = () => {
+                this.parent.refresh()
+            }
+            enter(gui) {
+
+            }
+            draw() {
+
+            }
+            exit() {
+
+            }
+        }
+        class Ellipse extends BaseExample {
+            name = 'Ellipse'
+            settings = {
+                x: 100,
+                y: 100,
+                rx: 50,
+                ry: 70,
+                rotation: 0,
+                startAngle: 0,
+                endAngle: 360,
+                ccw: false
+            }
+            draw(path) {
+                path.ellipse(this.x, this.y, this.rx, this.ry, this.rotation / 180 * Math.PI, this.startAngle / 180 * Math.PI, this.endAngle / 180 * Math.PI, this.ccw)
+            }
+        }
+        class RoundRect extends BaseExample {
+            name = 'RoundRect'
+            settings = {
+                x: 100,
+                y: 100,
+                w: 100,
+                h: 100,
+                lt: 0,
+                rt: 0,
+                bl: 0,
+                br: 0,
+            }
+            draw(path) {
+                path.roundRect(this.x, this.y, this.w, this.h, [this.lt, this.rt, this.bl, this.br])
+            }
+        }
+        class Arc extends BaseExample {
+            name = 'Arc'
+            settings = {
+                x: 100,
+                y: 100,
+                r: 50,
+                startAngle: 0,
+                endAngle: 360,
+                ccw: false
+            }
+            draw(path) {
+                path.arc(this.x, this.y, this.r, this.startAngle / 180 * Math.PI, this.endAngle / 180 * Math.PI, this.ccw)
+            }
+        }
+        class ArcTo extends BaseExample {
+            name = 'ArcTo'
+            settings = {
+                x: 100,
+                y: 100,
+                x1: 200,
+                y1: 100,
+                x2: 200,
+                y2: 200,
+                r: 50
+            }
+            draw(path) {
+                path.moveTo(this.x, this.y)
+                path.arcTo(this.x1, this.y1, this.x2, this.y2, this.r)
+            }
+        }
+        class PathStroker extends BaseExample {
+            name = 'PathStroker'
+            points = [[100, 100], [200, 100], [150, 200]]
+            settings = {
+                closePath: false,
+            }
+            forceFill = true
+            onAddPoint = (e) => {
+                this.points.push([e.offsetX, e.offsetY])
+                this.onChange()
+
+            }
+            clearPoints = () => {
+                this.points.length = 0
+                this.onChange()
+
+            }
+            createGui(gui) {
+                gui.add(this, 'clearPoints')
+            }
+            enter() {
+                canvas1.addEventListener('pointerdown', this.onAddPoint)
+
+            }
+            exit() {
+                this.points.length = 0
+            }
+            draw(path, type) {
+
+                this.points.forEach((d, i) => {
+                    if (i == 0) {
+                        path.moveTo(d[0], d[1])
+                    } else {
+                        path.lineTo(d[0], d[1])
+                    }
+                })
+                if (this.closePath) {
+                    path.closePath()
+                }
+                if (type == 2) {
+                    let stroker = new SkPath2d.PathStroker()
+                    let newPath = stroker.stroke(path.getPath(), {
+                        strokeWidth: this.parent.lineWidth,
+                        lineJoin: this.parent.lineJoin,
+                        lineCap: this.parent.lineCap,
+                        miterLimit: 10,
+
+                    })
+                    debugger
+                    path.getPath().copy(newPath)
+
+
+                } else {
+
+                }
+
+            }
+        }
+        class Main {
+            static examples = [Ellipse, RoundRect, Arc, ArcTo, PathStroker]
+            examples = []
+            currentExample = null
+            example = ''
+            dirty = true
+            constructor() {
+                Main.examples.forEach(Example => {
+                    this.examples.push(new Example(this))
+                })
+                this.gui = new lil.GUI()
+                this.example = this.examples[0].name
+            }
+            animationId = 0
+            drawMode = 'stroke'
+            lineWidth = 1
+            lineJoin = 'miter'
+            lineCap = 'butt'
+            showBounds = false
+            start() {
+                let gui = this.gui
+
+                gui.add(this, 'example', this.examples.map(d => d.name)).onChange((v) => {
+                    this.setExampleWithName(v)
+                })
+                gui.add(this, 'drawMode', ['fill', 'stroke']).name('绘制模式').onChange(this.refresh)
+                gui.add(this, 'lineWidth', 1, 20, 1).name('线宽').onChange(this.refresh)
+                gui.add(this, 'lineJoin', ['bevel', 'miter', 'round']).name('线宽').onChange(this.refresh)
+                gui.add(this, 'lineCap', ["butt", "round", "square"]).name('线宽').onChange(this.refresh)
+                gui.add(this, 'showBounds').name('显示边界框').onChange(this.refresh)
+                this.setExampleWithName(this.example)
+
+                let loop = () => {
+                    this.update()
+                    this.animationId = requestAnimationFrame(loop)
+
+                }
+                this.animationId = requestAnimationFrame(loop)
+            }
+            stop() {
+                cancelAnimationFrame(this.animationId)
+            }
+            setExampleWithName(name) {
+                let example = this.examples.find(d => d.name === name)
+                if (example) {
+                    this.showExample(example)
+                }
+            }
+            showExample(example) {
+                if (this.currentExample !== example) {
+                    let gui = this.gui.addFolder(example.name)
+
+                    if (this.currentExample) {
+                        this.currentExample.gui.destroy()
+                        this.currentExample.exit()
+                    }
+
+                    example.gui = gui
+                    this.currentExample = example
+                    example.createGui(gui)
+                    example.enter(gui)
+                    this.refresh()
+                }
+            }
+            update() {
+                if (this.dirty && this.currentExample) {
+                    this.draw()
+                    this.dirty = false
+                }
+            }
+            refresh = () => {
+                this.dirty = true
+            }
+            drawOnce(ctx, callback) {
+
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+                ctx.save()
+                ctx.scale(dpr, dpr)
+                callback(ctx);
+                ctx.restore()
+            }
+            draw() {
+                let currentExample = this.currentExample
+                // 原生
+                let path = new Path2D()
+
+                let skiaPath = new SkPath2d.Path2D()
+                this.drawOnce(ctx0, (ctx) => {
+                    ctx.save()
+                    ctx.beginPath()
+                    currentExample.draw(ctx, 1)
+                    ctx.strokeStyle = 'red'
+                    ctx.fillStyle = 'red'
+                    ctx.lineWidth = this.lineWidth
+                    ctx.lineJoin = this.lineJoin
+                    ctx.lineCap = this.lineCap
+                    if (this.drawMode === 'fill') {
+                        ctx.fill()
+                    } else {
+                        ctx.stroke()
+                    }
+                    ctx.restore()
+
+                })
+                this.drawOnce(ctx1, (ctx) => {
+                    ctx.save()
+                    ctx.beginPath()
+                    currentExample.draw(skiaPath,2)
+                    ctx.strokeStyle = 'blue'
+                    ctx.fillStyle = 'blue'
+                    ctx.lineWidth = this.lineWidth
+                    ctx.lineJoin = this.lineJoin
+                    ctx.lineCap = this.lineCap
+                    skiaPath.toCanvas(ctx)
+                    if (currentExample.forceFill || this.drawMode === 'fill') {
+                        ctx.fill()
+                    } else {
+                        ctx.stroke()
+                    }
+                    ctx.restore()
+                    if (this.showBounds) {
+                        let bounds = skiaPath.computeTightBounds()
+                        bounds.outset(this.lineWidth / 2, this.lineWidth / 2)
+                        ctx.strokeStyle = 'yollow'
+                        ctx.lineWidth = 1
+                        ctx.beginPath()
+                        ctx.moveTo(bounds.left, bounds.top)
+                        ctx.lineTo(bounds.right, bounds.top)
+                        ctx.lineTo(bounds.right, bounds.bottom)
+                        ctx.lineTo(bounds.left, bounds.bottom)
+                        ctx.closePath()
+                        ctx.stroke()
+                    }
+                })
+
+            }
+        }
+        let main = new Main()
+        main.start()
+
+        function resize() {
+            setSize(canvas0, dpr, 400, 400)
+            setSize(canvas1, dpr, 400, 400)
+            main.refresh()
+        }
+        window.addEventListener('resize', resize)
+        resize()
+
+
+
+
+    </script>
+</body>
+</html>

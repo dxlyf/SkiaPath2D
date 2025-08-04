@@ -295,6 +295,12 @@ export class Path2D {
     rect(x: number, y: number, width: number, height: number) {
         rect(this._path, x, y, width, height);
     }
+    getBounds(){
+        return this._path.getBounds()
+    }
+    computeTightBounds(){
+        return this._path.computeTightBounds()
+    }
     toCanvas(ctxOrPath:globalThis.Path2D) {
         return this._path.toCanvas(ctxOrPath)
     }

@@ -945,7 +945,7 @@ export class PathBuilder {
         let extremas = new Array(5).fill(0).map(() => Point.default()); // big enough to hold worst-case curve type (cubic) extremas + 1
 
         // initial with the first MoveTo, so we don't have to check inside the switch
-        let min = Point.default(), max = Point.default()
+        let min = Point.create(Infinity,Infinity), max = Point.create(-Infinity, -Infinity)
         let pts = this.fPts, k = 0, wIndex = 0
         for (let i = 0; i < this.fVerbs.length; ++i) {
             let count = 0;
