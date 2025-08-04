@@ -1,5 +1,12 @@
+
+# use
+```bash
+npm install skia-path2d
+```
 # SkiaPath2D  
-Extracts core code related to Path2D, PathStore, and isPointInPath from the Skia source code and rewrites it in TypeScript.  
+Extracts core code related to Path2D, PathStore, and isPointInPath from the Skia source code and rewrites it in TypeScript.
+
+
 
 **PathBuilder**: The core class, ported from Skia's PathBuilder class, with some methods rewritten to remove redundant code and simplify logic.  
 
