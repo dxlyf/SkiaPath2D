@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>skia-path2d测试</title>
+    <title>skia-path2d test</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.min.css">
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.umd.min.js"></script>
 
@@ -40,7 +40,7 @@
             <canvas></canvas>
         </div>
         <div class='skia-path2d'>
-            <h3>skia-path2d</h3>
+            <h3>skia-path2d <span>click:</span><span id="hitTest">miss</span></h3>
             <canvas></canvas>
         </div>
     </div>
@@ -151,16 +151,19 @@
                 path.arcTo(this.x1, this.y1, this.x2, this.y2, this.r)
             }
         }
-        class PathStroker extends BaseExample {
-            name = 'PathStroker'
+        class Path extends BaseExample {
+            name = 'Path'
             points = [[100, 100], [200, 100], [150, 200]]
             settings = {
+                desc:'Press the middle mouse button to add a point',
                 closePath: false,
             }
             forceFill = true
             onAddPoint = (e) => {
-                this.points.push([e.offsetX, e.offsetY])
-                this.onChange()
+                if(e.buttons===4){
+                    this.points.push([e.offsetX, e.offsetY])
+                     this.onChange()
+                }
 
             }
             clearPoints = () => {
@@ -190,27 +193,11 @@
                 if (this.closePath) {
                     path.closePath()
                 }
-                if (type == 2) {
-                    let stroker = new SkPath2d.PathStroker()
-                    let newPath = stroker.stroke(path.getPath(), {
-                        strokeWidth: this.parent.lineWidth,
-                        lineJoin: this.parent.lineJoin,
-                        lineCap: this.parent.lineCap,
-                        miterLimit: 10,
-
-                    })
-                    debugger
-                    path.getPath().copy(newPath)
-
-
-                } else {
-
-                }
 
             }
         }
         class Main {
-            static examples = [Ellipse, RoundRect, Arc, ArcTo, PathStroker]
+            static examples = [Ellipse, RoundRect, Arc, ArcTo, Path]
             examples = []
             currentExample = null
             example = ''
@@ -227,20 +214,33 @@
             lineWidth = 1
             lineJoin = 'miter'
             lineCap = 'butt'
+            boundsAutoOffset = true
+
             showBounds = false
+            currentPath=null
             start() {
                 let gui = this.gui
 
                 gui.add(this, 'example', this.examples.map(d => d.name)).onChange((v) => {
                     this.setExampleWithName(v)
                 })
-                gui.add(this, 'drawMode', ['fill', 'stroke']).name('绘制模式').onChange(this.refresh)
-                gui.add(this, 'lineWidth', 1, 20, 1).name('线宽').onChange(this.refresh)
-                gui.add(this, 'lineJoin', ['bevel', 'miter', 'round']).name('线宽').onChange(this.refresh)
-                gui.add(this, 'lineCap', ["butt", "round", "square"]).name('线宽').onChange(this.refresh)
-                gui.add(this, 'showBounds').name('显示边界框').onChange(this.refresh)
+                gui.add(this, 'drawMode', ['fill', 'stroke']).onChange(this.refresh)
+                gui.add(this, 'lineWidth', 1, 20, 1).onChange(this.refresh)
+                gui.add(this, 'lineJoin', ['bevel', 'miter', 'round']).onChange(this.refresh)
+                gui.add(this, 'lineCap', ["butt", "round", "square"]).onChange(this.refresh)
+                gui.add(this, 'showBounds').onChange(this.refresh)
+                gui.add(this, 'boundsAutoOffset').onChange(this.refresh)
                 this.setExampleWithName(this.example)
-
+                const hitTest=document.querySelector('#hitTest')
+                canvas1.addEventListener('pointerdown', (e) => {
+                    let x=e.offsetX,y=e.offsetY
+                    hitTest.innerHTML=`miss`
+                    let path=this.currentPath
+                    //"evenodd" | "nonzero"
+                    if(path&&path.contains(x,y)){
+                        hitTest.innerHTML=`hit`
+                    }
+                })
                 let loop = () => {
                     this.update()
                     this.animationId = requestAnimationFrame(loop)
@@ -296,6 +296,7 @@
                 let path = new Path2D()
 
                 let skiaPath = new SkPath2d.Path2D()
+                this.currentPath=skiaPath
                 this.drawOnce(ctx0, (ctx) => {
                     ctx.save()
                     ctx.beginPath()
@@ -316,22 +317,30 @@
                 this.drawOnce(ctx1, (ctx) => {
                     ctx.save()
                     ctx.beginPath()
-                    currentExample.draw(skiaPath,2)
+                    currentExample.draw(skiaPath)
+                    if(this.drawMode === 'stroke') {
+                        let stroker = new SkPath2d.PathStroker()
+                        let newPath = stroker.stroke(skiaPath.getPath(), {
+                            strokeWidth: this.lineWidth,
+                            lineJoin: this.lineJoin,
+                            lineCap: this.lineCap,
+                            miterLimit: 10,
+
+                        })
+                        skiaPath.getPath().copy(newPath)
+                    }
                     ctx.strokeStyle = 'blue'
                     ctx.fillStyle = 'blue'
-                    ctx.lineWidth = this.lineWidth
-                    ctx.lineJoin = this.lineJoin
-                    ctx.lineCap = this.lineCap
+
                     skiaPath.toCanvas(ctx)
-                    if (currentExample.forceFill || this.drawMode === 'fill') {
-                        ctx.fill()
-                    } else {
-                        ctx.stroke()
-                    }
+                    ctx.fill()
+                
                     ctx.restore()
                     if (this.showBounds) {
                         let bounds = skiaPath.computeTightBounds()
-                        bounds.outset(this.lineWidth / 2, this.lineWidth / 2)
+                        if(this.boundsAutoOffset&&this.drawMode!=='fill'&&!currentExample.forceFill){
+                            bounds.outset(this.lineWidth / 2, this.lineWidth / 2)
+                        }
                         ctx.strokeStyle = 'yollow'
                         ctx.lineWidth = 1
                         ctx.beginPath()
