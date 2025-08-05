@@ -44,6 +44,13 @@
             <canvas></canvas>
         </div>
     </div>
+    <p>
+        当绘制模式是Stroke时，右边画布并不是使用canvas stroke来绘制，而是通过PathStroker生成描边轮廓用canvas fill
+    </p>
+    <p>
+        When the drawing mode is set to Stroke, the right canvas does not use the canvas stroke method for rendering. Instead, it generates stroke outlines through PathStroker and renders them using canvas fill.
+    </p>
+    <div id="desc"></div>
     <script>
         function setSize(canvas, dpr, width, height) {
             canvas.width = width * dpr
@@ -60,6 +67,7 @@
         const dpr = window.devicePixelRatio || 1
 
         class BaseExample {
+            desc=''
             settings = {}
             constructor(parent) {
                 this.parent = parent
@@ -68,11 +76,14 @@
             createGui(gui) {
                 Object.keys(this.settings).forEach(key => {
                     gui.add(this.settings, key).onChange(this.onChange)
-                    Object.defineProperty(this, key, {
-                        get: () => {
-                            return this.settings[key]
-                        }
-                    })
+                    let desc=Object.getOwnPropertyDescriptor(this, key)
+                    if(!desc){
+                        Object.defineProperty(this, key, {
+                            get: () => {
+                                return this.settings[key]
+                            }
+                        })
+                    }
                 })
 
             }
@@ -153,9 +164,9 @@
         }
         class Path extends BaseExample {
             name = 'Path'
+            desc='Press the middle mouse button to add a point'
             points = [[100, 100], [200, 100], [150, 200]]
             settings = {
-                desc:'Press the middle mouse button to add a point',
                 closePath: false,
             }
             forceFill = true
@@ -172,6 +183,7 @@
 
             }
             createGui(gui) {
+                super.createGui(gui)
                 gui.add(this, 'clearPoints')
             }
             enter() {
@@ -270,6 +282,8 @@
                     this.currentExample = example
                     example.createGui(gui)
                     example.enter(gui)
+                    document.querySelector('#desc').innerHTML = example.desc
+
                     this.refresh()
                 }
             }
