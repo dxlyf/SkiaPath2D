@@ -2,7 +2,7 @@
 // 转换成js 
 
 import { Point, Point3D } from "./point";
-import { FloatPoint, Ref, PointerArray, sqrt, fabs, swap, sk_ieee_float_divide, min, max, clamp, lerp, sk_double_to_float, sk_ieee_double_divide } from "./util";
+import { FloatPoint, Ref, PointerArray, sqrt, fabs, sk_ieee_float_divide, max, clamp, sk_double_to_float } from "./util";
 import { SkScalarIsNaN, SkScalarCos, SkScalarSqrt, SkScalarACos, SkScalarInvert, SkScalarNearlyZero, SkScalarPow, SkDoubleToScalar, SK_ScalarPI, SkScalarIsFinite, SkScalarAbs, SkScalarInterp, SkScalarsAreFinite, SK_ScalarHalf, SK_Scalar1, SkScalarLog2, SkScalarCeilToInt, SK_ScalarNearlyZero, SK_ScalarRoot2Over2 } from './scalar'
 import { SkBezierCubic } from "./bezier_cubic";
 import { SkCubics } from "./cubics";
@@ -272,15 +272,15 @@ function SkFindQuadMidTangent(src: Point[]): number {
     B = 2(b - a)
     Solve for t, only if it fits between 0 < t < 1
 */
-function SkFindQuadExtrema(a: number, b: number, c: number, tValue: number[]): number {
+function SkFindQuadExtrema(a: number, b: number, c: number, tValue: PointerArray<number>): number {
     /*  At + B == 0
         t = -B / A
     */
-    return valid_unit_divide(a - b, a - b - b + c, PointerArray.from(tValue));
+    return valid_unit_divide(a - b, a - b - b + c, tValue);
 }
 
 function flatten_double_quad_extrema(coords: PointerArray<Point>, axis: 'x' | 'y' = 'x') {
-    coords.get(2)[axis] = coords.get(6)[axis] = coords.get(4)[axis];
+    coords.get(1)[axis] = coords.get(3)[axis] = coords.get(2)[axis];
 }
 
 
@@ -469,12 +469,12 @@ B = 6(a - 2b + c)
 C = 3(b - a)
 Solve for t, keeping only those that fit betwee 0 < t < 1
 */
-function SkFindCubicExtrema(a: number, b: number, c: number, d: number, tValues: number[]) {
+function SkFindCubicExtrema(a: number, b: number, c: number, d: number, tValues: PointerArray<number>) {
     // we divide A,B,C by 3 to simplify
     let A = d - a + 3 * (b - c);
     let B = 2 * (a - b - b + c);
     let C = b - a;
-    return SkFindUnitQuadRoots(A, B, C, PointerArray.from(tValues));
+    return SkFindUnitQuadRoots(A, B, C, tValues);
 }
 
 function unchecked_mix(a: FloatPoint, b: FloatPoint, t: FloatPoint) {
@@ -565,6 +565,7 @@ function SkChopCubicAt_5(src: Point[], dst: Point[], tValues: ArrayLike<number>,
         } else {
             let i = 0;
             let dstIndex = 0
+            let tmpDist: Point[] = []
             for (; i < tCount - 1; i += 2) {
                 // Do two chops at once.
                 let tt = FloatPoint.splat(tValues[i]);
@@ -573,7 +574,7 @@ function SkChopCubicAt_5(src: Point[], dst: Point[], tValues: ArrayLike<number>,
                     tt = tt.clone().sub(FloatPoint.splat(lastT)).div(FloatPoint.splat(1 - lastT)).clmap(FloatPoint.splat(0), FloatPoint.splat(1))
 
                 }
-                let tmpDist: Point[] = []
+                tmpDist.length=0
                 SkChopCubicAt_4(src, tmpDist, tt[0], tt[1]);
                 tmpDist.forEach((p, i) => {
                     dst[dstIndex + i] = p
@@ -588,7 +589,7 @@ function SkChopCubicAt_5(src: Point[], dst: Point[], tValues: ArrayLike<number>,
                     let lastT = tValues[i - 1];
                     t = clamp(sk_ieee_float_divide(t - lastT, 1 - lastT), 0, 1);
                 }
-                let tmpDist: Point[] = []
+                tmpDist.length=0
                 SkChopCubicAt_3(src, tmpDist, t);
                 tmpDist.forEach((p, i) => {
                     dst[dstIndex + i] = p
@@ -719,7 +720,7 @@ function SkFindCubicMidTangent(src: Point[]): number {
 }
 
 function flatten_double_cubic_extrema(coords: PointerArray<Point>, axis: 'x' | 'y' = 'x') {
-    coords.get(4)[axis] = coords.get(8)[axis] = coords.get(6)[axis];
+    coords.get(2)[axis] = coords.get(4)[axis] = coords.get(3)[axis];
 }
 
 
@@ -733,12 +734,12 @@ function flatten_double_cubic_extrema(coords: PointerArray<Point>, axis: 'x' | '
     If dst == null, it is ignored and only the count is returned.
 */
 function SkChopCubicAtYExtrema(src: Point[], dst: Point[]) {
-    let tValues = [0, 0];
+    let tValues = PointerArray.from([0,0]);
     let roots = SkFindCubicExtrema(src[0].y, src[1].y, src[2].y,
         src[3].y, tValues);
 
     let dstRef = PointerArray.from(dst)
-    SkChopCubicAt_5(src, dst, tValues, roots);
+    SkChopCubicAt_5(src, dst, tValues.data, roots);
     if (dst && roots > 0) {
         // we do some cleanup to ensure our Y extrema are flat
         flatten_double_cubic_extrema(dstRef, 'y');
@@ -751,11 +752,11 @@ function SkChopCubicAtYExtrema(src: Point[], dst: Point[]) {
 }
 
 function SkChopCubicAtXExtrema(src: Point[], dst: Point[]) {
-    let tValues = [0, 0];
+    let tValues = PointerArray.from([0,0]);
     let roots = SkFindCubicExtrema(src[0].x, src[1].x, src[2].x,
         src[3].x, tValues);
 
-    SkChopCubicAt_5(src, dst, tValues, roots);
+    SkChopCubicAt_5(src, dst, tValues.data, roots);
     let dstRef = PointerArray.from(dst)
     if (dst && roots > 0) {
         // we do some cleanup to ensure our Y extrema are flat
@@ -1085,9 +1086,9 @@ function solve_cubic_poly(coeff: number[], tValues: number[]): number {
     F' dot F'' -> CCt^3 + 3BCt^2 + (2BB + CA)t + AB
 */
 function formulate_F1DotF2(src: number[], coeff: number[]) {
-    let a = src[2] - src[0];
-    let b = src[4] - 2 * src[2] + src[0];
-    let c = src[6] + 3 * (src[2] - src[4]) - src[0];
+    let a = src[1] - src[0];
+    let b = src[2] - 2 * src[1] + src[0];
+    let c = src[3] + 3 * (src[1] - src[2]) - src[0];
 
     coeff[0] = c * c;
     coeff[1] = 3 * b * c;
@@ -1326,8 +1327,8 @@ function SkChopMonoCubicAtX(src: Point[], x: number, dst: Point[]) {
 //    coeff[2] for t^0
 //
 function conic_deriv_coeff(src: number[], w: number, coeff: number[]) {
-    const P20 = src[4] - src[0];
-    const P10 = src[2] - src[0];
+    const P20 = src[2] - src[0];
+    const P10 = src[1] - src[0];
     const wP10 = w * P10;
     coeff[0] = w * P20 - P20;
     coeff[1] = P20 - 2 * wP10;
@@ -1350,11 +1351,11 @@ function conic_find_extrema(src: number[], w: number, t: Ref<number>) {
 
 // We only interpolate one dimension at a time (the first, at +0, +3, +6).
 function p3d_interp(src: Point3D[], dst: Point3D[], t: number, axis: 'x' | 'y' | 'z' = 'x') {
-    let ab = SkScalarInterp(src[0][axis], src[3][axis], t);
-    let bc = SkScalarInterp(src[3][axis], src[6][axis], t);
+    let ab = SkScalarInterp(src[0][axis], src[1][axis], t);
+    let bc = SkScalarInterp(src[1][axis], src[2][axis], t);
     dst[0][axis] = ab;
-    dst[3][axis] = SkScalarInterp(ab, bc, t);
-    dst[6][axis] = bc;
+    dst[1][axis] = SkScalarInterp(ab, bc, t);
+    dst[2][axis] = bc;
 }
 
 function ratquad_mapTo3D(src: Point[], w: number, dst: Point3D[]) {
@@ -1922,24 +1923,13 @@ class SkConic {
  * @returns 极值点个数
  */
 function SkComputeQuadExtremas(src: Point[], extremas: Point[]) {
-    let ts: number[] = [], tmp: number[] = [];
-    let n = 0,tmp_n=0
-    tmp_n=SkFindQuadExtrema(src[0].x, src[1].x, src[2].x, tmp)
-    if (tmp_n> 0) {
-        for(let i=0,j=n;i<tmp_n;i++,j++){
-            ts[j]=tmp[i]
-        }
-        n=tmp_n
-    }
-    tmp_n=SkFindQuadExtrema(src[0].y, src[1].y, src[2].y, tmp)
-    if (tmp_n > 0) {
-        for(let i=0,j=n;i<tmp_n;i++,j++){
-            ts[j]=tmp[i]
-        }
-        n+=tmp_n
-    }
+    let ts = PointerArray.from([0,0]);
+    let n = SkFindQuadExtrema(src[0].x, src[1].x, src[2].x, ts);
+    ts.next(n)
+    n+=SkFindQuadExtrema(src[0].y, src[1].y, src[2].y, ts)
+    ts.move(0)
     for (let i = 0; i < n; ++i) {
-        extremas[i]=SkEvalQuadAt(src, ts[i])!;
+        extremas[i]=SkEvalQuadAt(src, ts.get(i))!;
     }
     extremas[n].copy(src[2]);
     return n + 1;
@@ -1952,25 +1942,13 @@ function SkComputeQuadExtremas(src: Point[], extremas: Point[]) {
  * @returns  极值点个数
  */
 function SkComputeCubicExtremas(src: Point[], extremas: Point[]) {
-    let ts: number[] = [0,0,0,0], tmp: number[] = [];
-    let n = 0,tmp_n=0
-    tmp_n=SkFindCubicExtrema(src[0].x, src[1].x, src[2].x, src[3].x, tmp)
-    if (tmp_n > 0) {
-        for(let i=0,j=n;i<tmp_n;i++,j++){
-            ts[j]=tmp[i]
-        }
-        n=tmp_n
-    }
-    tmp_n=SkFindCubicExtrema(src[0].y, src[1].y, src[2].y, src[3].y, tmp)
-   
-    if ( tmp_n> 0) {
-        for(let i=0,j=n;i<tmp_n;i++,j++){
-            ts[j]=tmp[i]
-        }
-        n+=tmp_n
-    }
+    let ts=PointerArray.from([0,0,0,0])
+    let n = 0
+    n=SkFindCubicExtrema(src[0].x, src[1].x, src[2].x, src[3].x, ts)
+    n+=SkFindCubicExtrema(src[0].y, src[1].y, src[2].y, src[3].y, ts)
+    ts.move(0)
     for (let i = 0; i < n; ++i) {
-        SkEvalCubicAt(src, ts[i], extremas[i], null, null);
+        SkEvalCubicAt(src, ts.get(i), extremas[i], null, null);
     }
     extremas[n].copy(src[3]);
     return n + 1;

@@ -3,11 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>skia-path2d test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.umd.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/skia-path2d@1.3.0/dist/skia-path2d.umd.min.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .native {}
+
+        .wrap {
+            display: flex;
+            gap: 15px;
+        }
+
+        .wrap>div {}
+
+        h3 {
+            text-align: center;
+        }
+
+        canvas {
+            background-color: #efefef;
+        }
+    </style>
 </head>
 <body>
-    
-    <canvas id="myCanvas" width="800" height="600"></canvas>
-    <script type="module" src="./main.ts"></script>
+    <div class="wrap">
+        <div class='native-path2d'>
+            <h3>native-path2d</h3>
+            <canvas></canvas>
+        </div>
+        <div class='skia-path2d'>
+            <h3>skia-path2d <span>click:</span><span id="hitTest">miss</span></h3>
+            <canvas></canvas>
+        </div>
+    </div>
+    <p>
+        当绘制模式是Stroke时，右边画布并不是使用canvas stroke来绘制，而是通过PathStroker生成描边轮廓用canvas fill
+    </p>
+    <p>
+        When the drawing mode is set to Stroke, the right canvas does not use the canvas stroke method for rendering. Instead, it generates stroke outlines through PathStroker and renders them using canvas fill.
+    </p>
+    <div id="desc"></div>
+    <script src="./main.ts" type="module"></script>
 </body>
 </html>

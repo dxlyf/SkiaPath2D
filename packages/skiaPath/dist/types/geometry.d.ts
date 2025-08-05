@@ -39,7 +39,7 @@ declare function SkFindQuadMidTangent(src: Point[]): number;
     B = 2(b - a)
     Solve for t, only if it fits between 0 < t < 1
 */
-declare function SkFindQuadExtrema(a: number, b: number, c: number, tValue: number[]): number;
+declare function SkFindQuadExtrema(a: number, b: number, c: number, tValue: PointerArray<number>): number;
 declare function SkChopQuadAtYExtrema(src: Point[], dst: Point[]): number;
 declare function SkFindQuadMaxCurvature(src: Point[]): number;
 declare function SkEvalCubicTangentAt(src: Point[], t: number, tangent?: Point): Point;
@@ -51,7 +51,7 @@ B = 6(a - 2b + c)
 C = 3(b - a)
 Solve for t, keeping only those that fit betwee 0 < t < 1
 */
-declare function SkFindCubicExtrema(a: number, b: number, c: number, d: number, tValues: number[]): number;
+declare function SkFindCubicExtrema(a: number, b: number, c: number, d: number, tValues: PointerArray<number>): number;
 declare function SkChopCubicAt_3(src: Point[], dst: Point[], t: number): void;
 declare function SkChopCubicAt_4(src: Point[], dst: Point[], t0: number, t1: number): void;
 declare function SkChopCubicAt_5(src: Point[], dst: Point[], tValues: ArrayLike<number>, tCount: number): void;

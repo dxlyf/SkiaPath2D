@@ -225,9 +225,9 @@ function winding_cubic(pts: Point[], x: number, y: number, onCurveCount: Ref<num
 }
 function conic_eval_numerator(src: number[], w: number, t: number) {
 
-    let src2w = src[2] * w;
+    let src2w = src[1] * w;
     let C = src[0];
-    let A = src[4] - 2 * src2w + C;
+    let A = src[2] - 2 * src2w + C;
     let B = 2 * (src2w - C);
     return poly_eval(A, B, C, t);
 }

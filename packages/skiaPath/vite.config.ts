@@ -6,15 +6,13 @@ export default defineConfig({
  
   plugins: [
     dts({
-    outDir: 'dist/types',      // 指定输出目录
+     // entryRoot:"src",
+      outDir: 'dist/types',      // 指定输出目录
    // include: ['src'],          // 包含的源码
     //exclude: ['**/*.test.ts'], // 排除测试文件
   })],
   resolve:{
-    alias:{
-      'skia-path2d': resolve(__dirname, './dist/skia-path2d.es.js'),
 
-    }
   },
   build: {
     outDir:'dist',
