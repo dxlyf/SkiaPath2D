@@ -1,5 +1,5 @@
 
-[demo](https://dxlyf.github.io/SkiaPath2D/) 
+<a href="https://dxlyf.github.io/SkiaPath2D" target="_blank" rel="noopener noreferrer">Open  Demo</a> 
 # use
 ```bash
 npm install skia-path2d
