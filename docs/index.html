@@ -44,13 +44,14 @@
             <canvas></canvas>
         </div>
     </div>
+    <div id="desc" style="min-height: 20px; color: red;"></div>
     <p>
         当绘制模式是Stroke时，右边画布并不是使用canvas stroke来绘制，而是通过PathStroker生成描边轮廓用canvas fill
     </p>
     <p>
         When the drawing mode is set to Stroke, the right canvas does not use the canvas stroke method for rendering. Instead, it generates stroke outlines through PathStroker and renders them using canvas fill.
     </p>
-    <div id="desc"></div>
+    
     <script>
         function setSize(canvas, dpr, width, height) {
             canvas.width = width * dpr
@@ -75,7 +76,7 @@
             }
             createGui(gui) {
                 Object.keys(this.settings).forEach(key => {
-                    gui.add(this.settings, key).onChange(this.onChange)
+                    gui.add(this.settings, key)
                     let desc=Object.getOwnPropertyDescriptor(this, key)
                     if(!desc){
                         Object.defineProperty(this, key, {
@@ -98,6 +99,18 @@
             }
             exit() {
 
+            }
+        }
+        class Rect extends BaseExample {
+            name = 'Rect'
+            settings = {
+                x: 100,
+                y: 100,
+                w:100,
+                h:100
+            }
+            draw(path) {
+                path.rect(this.x, this.y, this.w,this.h)
             }
         }
         class Ellipse extends BaseExample {
@@ -162,6 +175,28 @@
                 path.arcTo(this.x1, this.y1, this.x2, this.y2, this.r)
             }
         }
+        class EllipseArcTo extends BaseExample {
+            name = 'EllipseArcTo'
+            desc='Similar to SVG path A command'
+            settings = {
+                x1: 100,
+                y1: 100,
+                x2: 200,
+                y2: 100,
+                rx:50,
+                ry:50,
+                xAxisRotation:0,
+                largeArcFlaag:false,
+                sweepFlag:false,
+            }
+            draw(path,type) {
+                if(type==2){
+                    path.ellipseArc(this.x1, this.y1, this.x2, this.y2, this.rx,this.ry,this.xAxisRotation/180*Math.PI,this.largeArcFlaag,this.sweepFlag)
+                }else{
+                    return new Path2D(`M${this.x1},${this.y1} A${this.rx},${this.ry},${this.xAxisRotation},${this.largeArcFlaag?1:0},${this.sweepFlag?1:0},${this.x2},${this.y2}`)
+                }
+            }
+        }
         class Path extends BaseExample {
             name = 'Path'
             desc='Press the middle mouse button to add a point'
@@ -208,8 +243,25 @@
 
             }
         }
+        class SvgPath extends BaseExample {
+            name = 'SvgPath'
+
+            settings = {
+                d:'M100,100 L200,100L150,200'
+            }
+            draw(path,type) {
+                if(type==2){
+                    path.getPath().reset()
+                    path.fromSvgPath(this.d)
+                }else{
+                    return new Path2D(this.d)
+                }
+            }
+            
+            
+        }
         class Main {
-            static examples = [Ellipse, RoundRect, Arc, ArcTo, Path]
+            static examples = [Ellipse,EllipseArcTo,Rect, RoundRect, Arc, ArcTo, Path,SvgPath]
             examples = []
             currentExample = null
             example = ''
@@ -226,22 +278,30 @@
             lineWidth = 1
             lineJoin = 'miter'
             lineCap = 'butt'
+            showOutline=false
             boundsAutoOffset = true
-
             showBounds = false
             currentPath=null
             start() {
                 let gui = this.gui
-
+                gui.onChange(()=>{
+                    this.refresh()
+                })
                 gui.add(this, 'example', this.examples.map(d => d.name)).onChange((v) => {
                     this.setExampleWithName(v)
                 })
-                gui.add(this, 'drawMode', ['fill', 'stroke']).onChange(this.refresh)
-                gui.add(this, 'lineWidth', 1, 20, 1).onChange(this.refresh)
-                gui.add(this, 'lineJoin', ['bevel', 'miter', 'round']).onChange(this.refresh)
-                gui.add(this, 'lineCap', ["butt", "round", "square"]).onChange(this.refresh)
-                gui.add(this, 'showBounds').onChange(this.refresh)
-                gui.add(this, 'boundsAutoOffset').onChange(this.refresh)
+                gui.add(this, 'drawMode', ['fill', 'stroke'])
+               const guiLineWidth= gui.add(this, 'lineWidth', 1, 20, 1)
+                gui.add(this, 'lineJoin', ['bevel', 'miter', 'round'])
+                gui.add(this, 'lineCap', ["butt", "round", "square"])
+                gui.add(this, 'showOutline').onChange(()=>{
+                     if(this.lineWidth<5){
+                        guiLineWidth.setValue(5)
+                     }
+                     this.refresh()
+                })
+                gui.add(this, 'showBounds')
+                gui.add(this, 'boundsAutoOffset')
                 this.setExampleWithName(this.example)
                 const hitTest=document.querySelector('#hitTest')
                 canvas1.addEventListener('pointerdown', (e) => {
@@ -314,16 +374,16 @@
                 this.drawOnce(ctx0, (ctx) => {
                     ctx.save()
                     ctx.beginPath()
-                    currentExample.draw(ctx, 1)
+                    path=currentExample.draw(path, 1)||path;
                     ctx.strokeStyle = 'red'
                     ctx.fillStyle = 'red'
                     ctx.lineWidth = this.lineWidth
                     ctx.lineJoin = this.lineJoin
                     ctx.lineCap = this.lineCap
                     if (this.drawMode === 'fill') {
-                        ctx.fill()
+                        ctx.fill(path)
                     } else {
-                        ctx.stroke()
+                        ctx.stroke(path)
                     }
                     ctx.restore()
 
@@ -331,7 +391,7 @@
                 this.drawOnce(ctx1, (ctx) => {
                     ctx.save()
                     ctx.beginPath()
-                    currentExample.draw(skiaPath)
+                    currentExample.draw(skiaPath,2)
                     if(this.drawMode === 'stroke') {
                         let stroker = new SkPath2d.PathStroker()
                         let newPath = stroker.stroke(skiaPath.getPath(), {
@@ -347,7 +407,11 @@
                     ctx.fillStyle = 'blue'
 
                     skiaPath.toCanvas(ctx)
-                    ctx.fill()
+                    if(this.drawMode === 'stroke'&&this.showOutline){
+                        ctx.stroke()
+                    }else{
+                        ctx.fill()
+                    }
                 
                     ctx.restore()
                     if (this.showBounds) {
