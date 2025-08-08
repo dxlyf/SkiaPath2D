@@ -1,6 +1,6 @@
-import {ellipseArcToCubicBezier} from './arc'
+import { ellipseArcToCubicBezier } from './arc'
 export const Command = {
-    M: 1,
+    M: 2,
     L: 2,
     H: 1,
     V: 1,
@@ -23,7 +23,7 @@ export type HorizonalCommand = PathCommand<'H', [number]>
 // V y
 export type VerticalCommand = PathCommand<'V', [number]>
 // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-export type ArcCommand = PathCommand<'A', [number, number, number,0|1, 0|1, number, number]>
+export type ArcCommand = PathCommand<'A', [number, number, number, 0 | 1, 0 | 1, number, number]>
 // Q cx cy x y
 export type QuadCommand = PathCommand<'Q', [number, number, number, number]>
 // T x y
@@ -39,20 +39,141 @@ export type CloseCommand = PathCommand<'Z', []>
 
 export type SVGPathCommand = MoveCommand | LineCommand | HorizonalCommand | VerticalCommand | ArcCommand | QuadCommand | QuadSmoothCommand | CubicCommand | CubicSmoothCommand | CloseCommand;
 
-// const commandReg = /([mlhvaqtcsz])([^mlhvaqtcsz]+)?/gi;
-// const numberReg = /-?\d*\.?\d+(e[-+]?\d+)?/gi;
-function isWhiteSpace(ch: string) {
-    return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r';
+
+function isBetween(c: number, min: number, max: number) {
+    return c >= min && c <= max
 }
-function isSpaceOrComma(ch: string) {
-    return ch === ' ' || ch === ',';
+
+function isWhitespace(c: string) {
+    return isBetween(c.charCodeAt(0), 1, 32);
 }
+
+function isDigit(c: string) {
+    return isBetween(c.charCodeAt(0), '0'.charCodeAt(0), '9'.charCodeAt(0));
+}
+
+function isSeparator(c: string) {
+    return isWhitespace(c) || c === ',';
+}
+
+function isLower(c: string) {
+    return isBetween(c.charCodeAt(0), 'a'.charCodeAt(0), 'z'.charCodeAt(0));
+}
+
+function toUpper(c: string) {
+    return String.fromCharCode(c.charCodeAt(0) - 'a'.charCodeAt(0) + 'A'.charCodeAt(0));
+}
+
+function skipWhitespace(str: string) {
+    let pos = 0
+    while (str.length > 0 && isWhitespace(str[pos])) {
+        pos++
+    }
+    return str.slice(pos);
+}
+
+function skipSeparator(str: string) {
+    let pos = 0
+    while (str.length > 0 && isSeparator(str[pos])) {
+        pos++
+    }
+    return str.slice(pos);
+}
+function strtod(str: string, endPtr: { value: string }) {
+    str = skipWhitespace(str);
+    let i = 0
+    // Handle optional sign
+    if (i < str.length && (str[i] === '+' || str[i] === '-')) {
+        i++;
+    }
+    // Parse integer part
+    while (i < str.length && isDigit(str[i])) {
+        i++;
+    }
+
+    // Parse decimal part
+    if (i < str.length && str[i] === '.') {
+        i++;
+        while (i < str.length && isDigit(str[i])) {
+            i++;
+        }
+    }
+
+    // Parse exponent
+    if (i < str.length && (str[i] === 'e' || str[i] === 'E')) {
+        i++;
+        // Exponent sign
+        if (i < str.length && (str[i] === '+' || str[i] === '-')) {
+            i++;
+        }
+        // Exponent digits
+        while (i < str.length && isDigit(str[i])) {
+            i++;
+        }
+    }
+    // Set end pointer position
+    if (i == 0) {
+        endPtr.value = str;
+        return 0;
+    }
+    endPtr.value = str.substring(i);
+    return Number(str.substring(0, i));
+}
+function findScalar(str: string, value: { value: number }) {
+    str = skipWhitespace(str);
+    let stop = { value: '' };
+    let v = strtod(str, stop);
+    if (str == stop.value) {
+        return '';
+    }
+    if (value) {
+        value.value = v;
+    }
+    return stop.value;
+}
+function findScalarSingle(str: string, value: { value: number }, isRelative: boolean, relative: number) {
+    str = findScalar(str, value);
+    if (isRelative) {
+        value.value += relative;
+    }
+    str = skipSeparator(str)
+    return str;
+}
+function findScalars(str: string, value: Float32Array, count: number) {
+    if (count > 0) {
+        let i = 0
+        let ref = { value: 0 }
+        for (; ;) {
+
+            str = findScalar(str, ref)
+            value[i] = ref.value
+            if (--count == 0 || str.length <= 0) {
+                break;
+            }
+            // keep going
+            str = skipWhitespace(str);
+            i++
+        }
+    }
+    return str
+}
+function findPoints(str: string, value: Float32Array, count: number, isRelative: boolean, relative?: null | { x: number, y: number }) {
+    str = findScalars(str, value, count)
+    if (isRelative) {
+        for (let index = 0; index < count; index += 2) {
+            value[index] += relative!.x;
+            value[index + 1] += relative!.y;
+        }
+    }
+    return str
+}
+
 export function pathFromSvgPathCommand<Path extends Path2D = Path2D>(path: Path, cmds: SVGPathCommand[]) {
-    let x=0,y=0 // 当前点坐标
-    let mx=0,my=0 //Move 点
-    let lastCpx=0,lastCpy=0
+    let x = 0, y = 0 // 当前点坐标
+    let mx = 0, my = 0 //Move 点
+    let lastCpx = 0, lastCpy = 0
     let cpx0 = 0, cpy0 = 0;
-    let prevCmd:Command|''=''
+    let prevCmd: Command | '' = ''
     for (let i = 0, len = cmds.length; i < len; i++) {
         const cmd = cmds[i]
         switch (cmd[0]) {
@@ -60,8 +181,8 @@ export function pathFromSvgPathCommand<Path extends Path2D = Path2D>(path: Path,
                 path.moveTo(cmd[1], cmd[2]);
                 x = cmd[1]
                 y = cmd[2]
-                mx=x
-                my=y
+                mx = x
+                my = y
                 break;
             case 'L':
                 path.lineTo(cmd[1], cmd[2]);
@@ -70,11 +191,11 @@ export function pathFromSvgPathCommand<Path extends Path2D = Path2D>(path: Path,
                 break;
             case 'H':
                 path.lineTo(cmd[1], y);
-                x=cmd[1]
+                x = cmd[1]
                 break;
             case 'V':
                 path.lineTo(x, cmd[1]);
-                y=cmd[1]
+                y = cmd[1]
                 break;
             case 'Q':
                 path.quadraticCurveTo(cmd[1], cmd[2], cmd[3], cmd[4]);
@@ -84,191 +205,212 @@ export function pathFromSvgPathCommand<Path extends Path2D = Path2D>(path: Path,
                 y = cmd[4]
                 break;
             case 'T':
-                cpx0=x
-                cpy0=y
-                if(prevCmd === 'Q' || prevCmd === 'T'){
-                    cpx0-=lastCpx-x
-                    cpy0-=lastCpy-y
+                cpx0 = x
+                cpy0 = y
+                if (prevCmd === 'Q' || prevCmd === 'T') {
+                    cpx0 -= lastCpx - x
+                    cpy0 -= lastCpy - y
                 }
                 path.quadraticCurveTo(cpx0, cpy0, cmd[1], cmd[2]);
-                lastCpx=cpx0
-                lastCpy=cpy0
+                lastCpx = cpx0
+                lastCpy = cpy0
                 x = cmd[1]
                 y = cmd[2]
                 break;
             case 'C':
-                path.bezierCurveTo(cmd[1], cmd[2],cmd[3], cmd[4],cmd[5],cmd[6]);
+                path.bezierCurveTo(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5], cmd[6]);
                 lastCpx = cmd[3]
                 lastCpy = cmd[4]
                 x = cmd[5]
                 y = cmd[6]
                 break;
             case 'S':
-                cpx0=x
-                cpy0=y
-                if(prevCmd === 'C' || prevCmd === 'S'){
-                    cpx0-=lastCpx-x
-                    cpy0-=lastCpy-y
+                cpx0 = x
+                cpy0 = y
+                if (prevCmd === 'C' || prevCmd === 'S') {
+                    cpx0 -= lastCpx - x
+                    cpy0 -= lastCpy - y
                 }
-                path.bezierCurveTo(cpx0,cpy0,cmd[1], cmd[2],cmd[3], cmd[4]);
+                path.bezierCurveTo(cpx0, cpy0, cmd[1], cmd[2], cmd[3], cmd[4]);
                 lastCpx = cmd[1]
                 lastCpy = cmd[2]
                 x = cmd[3]
                 y = cmd[4]
                 break
             case 'A':
-               {
-                let x0=x,y0=y
-                let rx=cmd[1],ry=cmd[2],xAxisRotation=cmd[3],largeArcFlag=!!cmd[4],sweepFlag=!!cmd[5]
-                let x2=cmd[6],y2=cmd[7]
-                let lastX=x2,lastY=y2
-                ellipseArcToCubicBezier(x0, y0,x2, y2, rx, ry, xAxisRotation, largeArcFlag, sweepFlag, (x0: number, y0: number, cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number, i: number) => {
-                    path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
-                    lastX=x
-                    lastY=y
-                });
-                x=lastX
-                y=lastY
-               }
-            
-            break;
+                {
+                    let x0 = x, y0 = y
+                    let rx = cmd[1], ry = cmd[2], xAxisRotation = cmd[3], largeArcFlag = !!cmd[4], sweepFlag = !!cmd[5]
+                    let x2 = cmd[6], y2 = cmd[7]
+                    let lastX = x2, lastY = y2
+                    ellipseArcToCubicBezier(x0, y0, x2, y2, rx, ry, xAxisRotation, largeArcFlag, sweepFlag, (x0: number, y0: number, cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number, i: number) => {
+                        path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
+                        lastX = x
+                        lastY = y
+                    });
+                    x = lastX
+                    y = lastY
+                }
+
+                break;
             case 'Z':
                 path.closePath()
-                x=mx
-                y=my
+                x = mx
+                y = my
                 break;
         }
-        prevCmd=cmd[0]
+        prevCmd = cmd[0]
     }
 
 }
-export function pathFromSvgPath<Path extends Path2D = Path2D>(path: Path, d: string) {
-    const cmds = parseSvgPath(d)
-    pathFromSvgPathCommand(path, cmds)
-}
-
-export function parseSvgPath(d: string): SVGPathCommand[] {
-
-    const result: SVGPathCommand[] = [];
-    let pos = 0, peekPos = 0, len = d.length, ch = '', upperCmd = ''
-
-    let cpx0 = 0, cpy0 = 0, cpx1 = 0, cpy1 = 0;
-    let x = 0, y = 0,mx=0,my=0;
-    while (pos < len) {
-        peekPos = pos
-        ch = d.charAt(peekPos)
-        while (isWhiteSpace(ch)) {
-            ch = d.charAt(++pos)
+export function pathFromSvgPath(path: Path2D, data: string) {
+    let first = { x: 0, y: 0 }
+    let c = { x: 0, y: 0 }
+    let lastc = { x: 0, y: 0 }
+    let points=new Float32Array(7)
+    let scratch={value:0}
+    let op = ''
+    let previousOp = ''
+    let relative = false
+    while (data.length) {
+        data = skipWhitespace(data)
+        if (data[0] === '') {
+            break;
         }
-        upperCmd = ch.toUpperCase()
-        const isRelative = ch !== upperCmd;
-        if (CommandSet.has(upperCmd)) {
-            ch = d.charAt(++pos)
-            let numValue = ''
-            let args: number[] = []
-            while (pos < len && !CommandSet.has(ch)) {
-                if (isSpaceOrComma(ch)) {
-                    if (numValue !== '') {
-                        args.push(parseFloat(numValue))
-                    }
-                    numValue = ''
-                } else {
-                    numValue += ch;
+        let ch = data[0]
+        if (isDigit(ch) || ch === '-' || ch === '+' || ch === '.') {
+            if (op == '' || op == 'Z') {
+                return false;
+            }
+        } else if (isSeparator(ch)) {
+            data = skipSeparator(data)
+        } else {
+            op = ch;
+            relative = false
+            if (isLower(ch)) {
+                relative = true
+                op = toUpper(ch)
+            }
+            data = data.substring(1)
+            data = skipSeparator(data)
+        }
+        switch (op) {
+            case 'M':
+                {
+                    data = findPoints(data, points, 2, relative, c)
+                    path.moveTo(points[0], points[1])
+                    previousOp = ''
+                    op = 'L'
+                    c.x = points[0]
+                    c.y = points[1]
                 }
-                ch = d.charAt(++pos)
-            }
-            if (numValue !== '') {
-                args.push(parseFloat(numValue))
-            }
+                break
+            case 'L':
+                {
+                    data = findPoints(data, points, 2, relative, c)
+                    path.lineTo(points[0], points[1])
+                    c.x = points[0]
+                    c.y = points[1]
+                }
+                break
+            case 'H':
+                {
+                    data = findScalarSingle(data, scratch, relative, c.x)
+                    path.lineTo(scratch.value, c.y)
+                    c.x = scratch.value
+                }
+                break
+            case 'V':
+                {
+                    data = findScalarSingle(data, scratch, relative, c.y)
+                    path.lineTo(c.x,scratch.value)
+                    c.y = scratch.value
+                }
+                break
+            case 'C':
+                {
+                    data = findPoints(data, points, 6, relative, c)
+                    path.bezierCurveTo(points[0], points[1], points[2], points[3], points[4], points[5])
+                    lastc.x = points[2]
+                    lastc.y = points[3]
+                    c.x = points[4]
+                    c.y = points[5]
+                }
+                break
+            case 'S':
+                {
+                    data = findPoints(data, points.subarray(2), 4, relative, c)
+                    points[0]=c.x
+                    points[1]=c.y
+                    if (previousOp == 'C' || previousOp == 'S') {
+                        points[0] -= lastc.x - c.x;
+                        points[1] -= lastc.y - c.y;
+                    }
+                   
+                    path.bezierCurveTo(points[0], points[1], points[2], points[3], points[4], points[5])
+                    lastc.x = points[2]
+                    lastc.y = points[3]
+                    c.x = points[4]
+                    c.y = points[5]
+                }
+                break
+            case 'Q':
+                {
+                    data = findPoints(data, points, 4, relative, c)
+                    path.quadraticCurveTo(points[0], points[1], points[2], points[3])
+                    lastc.x = points[0]
+                    lastc.y = points[1]
+                    c.x = points[2]
+                    c.y = points[3]
+                }
+                break
+            case 'T':
+                {
+                    data = findPoints(data, points.subarray(1), 2, relative, c)
+                    points[0]=c.x
+                    points[1]=c.y
+                    if (previousOp == 'Q' || previousOp == 'T') {
+                        points[0] -= lastc.x - c.x;
+                        points[1] -= lastc.y - c.y;
+                    }
+                    path.quadraticCurveTo(points[0], points[1], points[2], points[3])
+                    lastc.x = points[0]
+                    lastc.y = points[1]
+                    c.x = points[2]
+                    c.y = points[3]
+                }
+                break
+            case 'A':
+                data=findPoints(data, points, 7, false)
+                
+                let x0 = c.x, y0 = c.y
+                let rx = points[0], ry = points[1], xAxisRotation = points[2], largeArcFlag = !!points[3], sweepFlag = !!points[4]
+                let x2 = points[5], y2 = points[6]
+                x2=relative?x2+c.x:x2;
+                y2=relative?y2+c.y:y2;
 
-            switch (upperCmd) {
-                case 'M':
-                    x = isRelative ? x + args[0] : args[0]
-                    y = isRelative ? y + args[1] : args[1]
-                    args[0] = x
-                    args[1] = y
-                    mx=x
-                    my=y
-                    break
-                case 'L':
-                    x = isRelative ? x + args[0] : args[0]
-                    y = isRelative ? y + args[1] : args[1]
-                    args[0] = x
-                    args[1] = y
-                    break
-                case 'H':
-                    x = isRelative ? x + args[0] : args[0]
-                    args[0] = x
-                    break;
-                case 'V':
-                    y = isRelative ? y + args[0] : args[0]
-                    args[0] = y
-                    break;
-                case 'Q':
-                    cpx0 = isRelative ? x + args[0] : args[0]
-                    cpy0 = isRelative ? y + args[1] : args[1]
-                    x = isRelative ? x + args[2] : args[2]
-                    y = isRelative ? y + args[3] : args[3]
-                    args[0] = cpx0
-                    args[1] = cpy0
-                    args[2] = x;
-                    args[3] = y;
-                    break
-                case 'T':
-                    x = isRelative ? x + args[0] : args[0]
-                    y = isRelative ? y + args[1] : args[1]
-                    args[0] = x
-                    args[1] = y
-                    break
-                case 'C':
-                    cpx0 = isRelative ? x + args[0] : args[0]
-                    cpy0 = isRelative ? y + args[1] : args[1]
-                    cpx1 = isRelative ? x + args[2] : args[2]
-                    cpy1 = isRelative ? y + args[3] : args[3]
-                    x = isRelative ? x + args[4] : args[4]
-                    y = isRelative ? y + args[5] : args[5]
-                    args[0] = cpx0
-                    args[1] = cpy0
-                    args[2] = cpx1
-                    args[3] = cpy1
-                    args[4] = x;
-                    args[5] = y;
-                    break
-                case 'S':
-                    cpx1 = isRelative ? x + args[0] : args[0]
-                    cpy1 = isRelative ? y + args[1] : args[1]
-                    x = isRelative ? x + args[2] : args[2]
-                    y = isRelative ? y + args[3] : args[3]
-                    args[0] = cpx1
-                    args[1] = cpy1
-                    args[2] = x
-                    args[3] = y
-                    break
-                case 'A':
-                    let rx = args[0]
-                    let ry = args[1]
-                    let xAxisRotation = args[2]
-                    let largeArcFlag = args[3]
-                    let sweepFlag = args[4]
-                    x = isRelative ? x + args[5] : args[5]
-                    y = isRelative ? y + args[6] : args[6]
-                    args[0] = rx
-                    args[1] = ry
-                    args[2] = xAxisRotation
-                    args[3] = largeArcFlag
-                    args[4] = sweepFlag
-                    args[5] = x
-                    args[6] = y
+                ellipseArcToCubicBezier(x0, y0, x2, y2, rx, ry, xAxisRotation, largeArcFlag, sweepFlag, (x0: number, y0: number, cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number, i: number) => {
+                    path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
+                    c.x = x
+                    c.y = y
+                });
 
-                    break
-                case 'Z':
-                    x=mx
-                    y=my
-                    break
-            }
-            result.push([upperCmd as Command].concat(args as any) as SVGPathCommand)
+                break
+            case 'Z':
+                path.closePath()
+                c.x = first.x
+                c.y = first.y
+                break
+            default:
+                return false
         }
+        if (previousOp == '') {
+            first.x = c.x;
+            first.y = c.y;
+        }
+        previousOp = op
     }
-    return result;
-
+    return true;
 }
+
+

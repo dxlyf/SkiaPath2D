@@ -1,5 +1,5 @@
 export declare const Command: {
-    readonly M: 1;
+    readonly M: 2;
     readonly L: 2;
     readonly H: 1;
     readonly V: 1;
@@ -25,5 +25,4 @@ export type CubicSmoothCommand = PathCommand<'S', [number, number, number, numbe
 export type CloseCommand = PathCommand<'Z', []>;
 export type SVGPathCommand = MoveCommand | LineCommand | HorizonalCommand | VerticalCommand | ArcCommand | QuadCommand | QuadSmoothCommand | CubicCommand | CubicSmoothCommand | CloseCommand;
 export declare function pathFromSvgPathCommand<Path extends Path2D = Path2D>(path: Path, cmds: SVGPathCommand[]): void;
-export declare function pathFromSvgPath<Path extends Path2D = Path2D>(path: Path, d: string): void;
-export declare function parseSvgPath(d: string): SVGPathCommand[];
+export declare function pathFromSvgPath(path: Path2D, data: string): boolean;
