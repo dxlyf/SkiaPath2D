@@ -1058,7 +1058,7 @@ export class PathBuilder {
 
         let first = this.fPts[start_pt_index];
         for (let i = 1; i < count; i++) {
-            if (first.equals(this.fPts[i])) {
+            if (!first.equals(this.fPts[i])) {
                 return false;
             }
         }

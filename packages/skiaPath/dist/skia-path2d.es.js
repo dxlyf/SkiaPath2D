@@ -4015,7 +4015,7 @@ const fe = class fe {
       return !0;
     let i = this.fPts[t];
     for (let n = 1; n < e; n++)
-      if (i.equals(this.fPts[n]))
+      if (!i.equals(this.fPts[n]))
         return !1;
     return !0;
   }
