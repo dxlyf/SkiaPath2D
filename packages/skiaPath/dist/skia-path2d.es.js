@@ -804,7 +804,7 @@ class Nt {
     return this.EvalAt(t[0], t[1], t[2], t[3], e);
   }
 }
-const V = 1, pt = 0.5, er = Math.SQRT2, it = Math.PI, ir = 0.414213562, Ce = 0.707106781, hs = 3402823466e29, sr = -hs, nr = 1 / 0, rr = -1 / 0, lr = NaN, us = (s) => s, or = (s) => s, ar = (s) => s, hr = (s) => s, ur = (s) => s, $t = (s) => s, Mi = (s) => Math.floor(s), fr = (s) => Math.ceil(s), be = (s) => Math.round(s), fs = (s) => Math.trunc(s), cr = (s) => Math.floor(s), cs = (s) => Math.ceil(s), mr = (s) => Math.round(s), j = (s) => Math.abs(s), yr = (s, t) => Math.sign(t) * Math.abs(s), dr = (s, t) => s % t, U = (s) => Math.sqrt(s), ms = (s, t) => Math.pow(s, t), Re = (s) => Math.sin(s), xt = (s) => Math.cos(s), ys = (s) => Math.tan(s), pr = (s) => Math.asin(s), ds = (s) => Math.acos(s), He = (s, t) => Math.atan2(s, t), xr = (s) => Math.exp(s), br = (s) => Math.log(s), kr = (s) => Math.log2(s), ps = (s) => Number.isNaN(s), qt = (s) => Number.isFinite(s), We = (s, t) => Number.isFinite(s) && Number.isFinite(t), xs = (s, t) => s.slice(0, t).every(Number.isFinite), gr = (s) => s - fs(s), Lt = (s) => s * s, we = (s) => V / s, Ke = (s, t) => (s + t) * pt, J = (s) => s * pt, Je = (s) => s * (it / 180), _r = (s) => s * (180 / it), vr = (s) => s === Mi(s), $e = (s) => s < 0 ? -1 : s > 0 ? 1 : 0, Tr = (s) => s < 0 ? -V : s > 0 ? V : 0, Fe = V / 4096, nt = (s, t = Fe) => j(s) <= t, Z = (s, t, e = Fe) => j(s - t) <= e, Si = V / 65536, Gt = (s) => {
+const V = 1, pt = 0.5, er = Math.SQRT2, it = Math.PI, ir = 0.414213562, Ce = 0.707106781, hs = 3402823466e29, sr = -hs, nr = 1 / 0, rr = -1 / 0, lr = NaN, us = (s) => s, or = (s) => s, ar = (s) => s, hr = (s) => s, ur = (s) => s, $t = (s) => s, Mi = (s) => Math.floor(s), fr = (s) => Math.ceil(s), be = (s) => Math.round(s), fs = (s) => Math.trunc(s), cr = (s) => Math.floor(s), cs = (s) => Math.ceil(s), mr = (s) => Math.round(s), j = (s) => Math.abs(s), yr = (s, t) => Math.sign(t) * Math.abs(s), dr = (s, t) => s % t, U = (s) => Math.sqrt(s), ms = (s, t) => Math.pow(s, t), Re = (s) => Math.sin(s), xt = (s) => Math.cos(s), ys = (s) => Math.tan(s), pr = (s) => Math.asin(s), ds = (s) => Math.acos(s), He = (s, t) => Math.atan2(s, t), xr = (s) => Math.exp(s), br = (s) => Math.log(s), kr = (s) => Math.log2(s), ps = (s) => Number.isNaN(s), qt = (s) => Number.isFinite(s), Ne = (s, t) => Number.isFinite(s) && Number.isFinite(t), xs = (s, t) => s.slice(0, t).every(Number.isFinite), gr = (s) => s - fs(s), Lt = (s) => s * s, we = (s) => V / s, Ke = (s, t) => (s + t) * pt, J = (s) => s * pt, Je = (s) => s * (it / 180), _r = (s) => s * (180 / it), vr = (s) => s === Mi(s), $e = (s) => s < 0 ? -1 : s > 0 ? 1 : 0, Tr = (s) => s < 0 ? -V : s > 0 ? V : 0, We = V / 4096, nt = (s, t = We) => j(s) <= t, Z = (s, t, e = We) => j(s - t) <= e, Si = V / 65536, Gt = (s) => {
   const t = Re(s);
   return nt(t, Si) ? 0 : t;
 }, te = (s) => {
@@ -1940,9 +1940,9 @@ function rt(s, t, e, i) {
   return Ot(n.curIndex - i.curIndex);
 }
 function St(s, t, e, i) {
-  return e && e.copy(St(s, t)), i && i.copy(qe(s, t)), e || w(new bt(s).eval(T.splat(t)));
+  return e && e.copy(St(s, t)), i && i.copy(Fe(s, t)), e || w(new bt(s).eval(T.splat(t)));
 }
-function qe(s, t) {
+function Fe(s, t) {
   if (t == 0 && s[0] == s[1] || t == 1 && s[1] == s[2])
     return s[2].clone().subtract(s[0]);
   let e = S(s[0]), i = S(s[1]), n = S(s[2]), r = i.clone().sub(e), o = n.clone().sub(i).sub(r).clone().mulScalar(t).add(r);
@@ -1956,19 +1956,19 @@ function vs(s, t, e) {
   t[0] = w(i), t[1] = w(o), t[2] = w(ke(o, a, l)), t[3] = w(a), t[4] = w(r);
 }
 function Ts(s, t) {
-  return We(s, t) && (s || t);
+  return Ne(s, t) && (s || t);
 }
 function ge(s, t) {
   return !Ts(s.x - t.x, s.y - t.y);
 }
-function ze(s, t) {
+function qe(s, t) {
   let e = f.make(2);
   s.dot(t) >= 0 ? (e[0].copy(s), e[1].copy(t)) : s.cross(t) >= 0 ? (e[0].set(-s.y, +s.x), e[1].set(+t.y, -t.x)) : (e[0].set(+s.y, -s.x), e[1].set(-t.y, +t.x));
   let i = T.fromXY(e[0].x, e[1].x), n = T.fromXY(e[0].y, e[1].y), r = i.clone().mul(i).add(n.clone().mul(n)).sqrt().inverse();
   return i.mul(r), n.mul(r), f.create(i[0] + i[1], n[0] + n[1]);
 }
 function Mr(s) {
-  let t = s[1].clone().subtract(s[0]), e = s[2].clone().subtract(s[1]), i = ze(t, e.clone().negate()), n = se(t.dot(i), t.clone().subtract(e).dot(i));
+  let t = s[1].clone().subtract(s[0]), e = s[2].clone().subtract(s[1]), i = qe(t, e.clone().negate()), n = se(t.dot(i), t.clone().subtract(e).dot(i));
   return n > 0 && n < 1 || (n = 0.5), n;
 }
 function ei(s, t, e, i) {
@@ -2019,7 +2019,7 @@ function le(s, t, e, i, n) {
 function O(s, t, e) {
   return s.clone().lerp(s, t, e);
 }
-function fe(s, t, e) {
+function ce(s, t, e) {
   if (e == 1) {
     Ci(t, s, 4), t[4].copy(s[3]), t[5].copy(s[3]), t[6].copy(s[3]);
     return;
@@ -2029,7 +2029,7 @@ function fe(s, t, e) {
 }
 function Rs(s, t, e, i) {
   if (i == 1) {
-    fe(s, t, e), t[7].copy(s[3]), t[8].copy(s[3]), t[9].copy(s[3]);
+    ce(s, t, e), t[7].copy(s[3]), t[8].copy(s[3]), t[9].copy(s[3]);
     return;
   }
   let n = T.make(4), r = T.make(4), l = T.make(4), o = T.make(4), a = T.make(4);
@@ -2059,14 +2059,14 @@ function Ei(s, t, e, i) {
           let a = e[n - 1];
           o = ct(se(o - a, 1 - a), 0, 1);
         }
-        l.length = 0, fe(s, l, o), l.forEach((a, h) => {
+        l.length = 0, ce(s, l, o), l.forEach((a, h) => {
           t[r + h] = a;
         });
       }
     }
 }
 function Sr(s, t) {
-  fe(s, t, 0.5);
+  ce(s, t, 0.5);
 }
 function gt(s, t, e) {
   return T.make(4).setElements([
@@ -2087,7 +2087,7 @@ function Is(s, t, e) {
   return Li(s, t, e, t * t - 4 * s * e);
 }
 function Cr(s) {
-  let t = s[0].equals(s[1]) ? s[2].clone().subtract(s[0]) : s[1].clone().subtract(s[0]), e = s[2].equals(s[3]) ? s[3].clone().subtract(s[1]) : s[3].clone().subtract(s[2]), i = ze(t, e.clone().negate());
+  let t = s[0].equals(s[1]) ? s[2].clone().subtract(s[0]) : s[1].clone().subtract(s[0]), e = s[2].equals(s[3]) ? s[3].clone().subtract(s[1]) : s[3].clone().subtract(s[2]), i = qe(t, e.clone().negate());
   const n = [
     T.fromArray([-1, 2, -1, 0]),
     T.fromArray([3, -4, 1, 0]),
@@ -2313,7 +2313,7 @@ class W {
     let i = ie.make(3), n = ie.make(3);
     Qs(this.fPts, this.fW, i), _e(i, n, t, "x"), _e(i, n, t, "y"), _e(i, n, t, "z"), e[0].fPts[0] = this.fPts[0].clone(), e[0].fPts[1] = ve(n[0]), e[0].fPts[2] = ve(n[1]), e[1].fPts[0] = e[0].fPts[2].clone(), e[1].fPts[1] = ve(n[2]), e[1].fPts[2] = this.fPts[2].clone();
     let r = U(n[1].z);
-    return e[0].fW = n[0].z / r, e[1].fW = n[2].z / r, We(e[0].fPts[0].x, 14);
+    return e[0].fW = n[0].z / r, e[1].fW = n[2].z / r, Ne(e[0].fPts[0].x, 14);
   }
   chopAt_3(t, e, i) {
     if (t == 0 || e == 1)
@@ -2388,7 +2388,7 @@ class W {
   }
   findMidTangent() {
     const t = this.fPts, e = this.fW;
-    let i = t[1].clone().subtract(t[0]), n = t[2].clone().subtract(t[1]), r = ze(i, n.clone().negate()), l = t[2].clone().subtract(t[0]).multiplyScalar(e - 1), o = t[2].clone().subtract(t[0]).subtract(t[1].clone().subtract(t[0]).multiplyScalar(e * 2)), a = t[1].clone().subtract(t[0]).multiplyScalar(e), h = r.dot(l), u = r.dot(o), c = r.dot(a);
+    let i = t[1].clone().subtract(t[0]), n = t[2].clone().subtract(t[1]), r = qe(i, n.clone().negate()), l = t[2].clone().subtract(t[0]).multiplyScalar(e - 1), o = t[2].clone().subtract(t[0]).subtract(t[1].clone().subtract(t[0]).multiplyScalar(e * 2)), a = t[1].clone().subtract(t[0]).multiplyScalar(e), h = r.dot(l), u = r.dot(o), c = r.dot(a);
     return Is(h, u, c);
   }
   findXExtrema(t) {
@@ -2432,7 +2432,7 @@ class W {
   }
   static BuildUnitArc(t, e, i, n, r) {
     let l = t.dot(e), o = t.cross(e);
-    if (j(o) <= Fe && l > 0 && (o >= 0 && i == 0 || o <= 0 && i == 1))
+    if (j(o) <= We && l > 0 && (o >= 0 && i == 0 || o <= 0 && i == 1))
       return 0;
     i == 1 && (o = -o);
     let h = 0;
@@ -2759,7 +2759,7 @@ const ut = 0, vt = 1, Tt = 2, Pt = 3, mt = class mt {
     if (!this.initializeRect(t))
       return;
     const n = this.fRect;
-    if (We(e, i) || (e = i = 0), n.width < e + e || n.height < i + i) {
+    if (Ne(e, i) || (e = i = 0), n.width < e + e || n.height < i + i) {
       let r = Math.min(n.width / (e + e), n.height / (i + i));
       e *= r, i *= r;
     }
@@ -3275,7 +3275,7 @@ function Fi(s, t, e) {
 function Q(s, t, e) {
   return (s - t) * (e - t) <= 0;
 }
-function ce(s, t, e, i) {
+function me(s, t, e, i) {
   return e.y == i.y ? Q(e.x, s, i.x) && s != i.x : s == e.x && t == e.y;
 }
 function Us(s) {
@@ -3289,7 +3289,7 @@ function Hs(s, t, e, i) {
   }
   if (e < r || e > o)
     return 0;
-  if (ce(t, e, s[0], s[1]))
+  if (me(t, e, s[0], s[1]))
     return i.value += 1, 0;
   if (e == o)
     return 0;
@@ -3299,7 +3299,7 @@ function Hs(s, t, e, i) {
 function qi(s, t, e) {
   return s == t ? !0 : s < t ? t <= e : t >= e;
 }
-function me(s, t, e, i) {
+function ye(s, t, e, i) {
   return (s * i + t) * i + e;
 }
 function Ks(s, t, e, i, n) {
@@ -3313,7 +3313,7 @@ function hi(s, t, e, i) {
   }
   if (e < n || e > r)
     return 0;
-  if (ce(t, e, s[0], s[2]))
+  if (me(t, e, s[0], s[2]))
     return i.value += 1, 0;
   if (e == r)
     return 0;
@@ -3327,7 +3327,7 @@ function hi(s, t, e, i) {
     h = s[1 - l].x;
   else {
     let u = o.get(0), c = s[0].x, m = s[2].x - 2 * s[1].x + c, y = 2 * (s[1].x - c);
-    h = me(m, y, c, u);
+    h = ye(m, y, c, u);
   }
   return Z(h, t) && (t != s[2].x || e != s[2].y) ? (i.value += 1, 0) : h < t ? l : 0;
 }
@@ -3350,7 +3350,7 @@ function $s(s, t, e, i) {
   }
   if (e < n || e > r)
     return 0;
-  if (ce(t, e, s[0], s[3]))
+  if (me(t, e, s[0], s[3]))
     return i.value += 1, 0;
   if (e == r)
     return 0;
@@ -3379,11 +3379,11 @@ function tn(s, t, e, i) {
 }
 function Qi(s, t, e) {
   let i = s[1] * t, n = s[0], r = s[2] - 2 * i + n, l = 2 * (i - n);
-  return me(r, l, n, e);
+  return ye(r, l, n, e);
 }
 function Bi(s, t) {
   let e = 2 * (s - 1), i = 1, n = -e;
-  return me(n, e, i, t);
+  return ye(n, e, i, t);
 }
 function ui(s, t, e, i) {
   const n = s.fPts;
@@ -3394,7 +3394,7 @@ function ui(s, t, e, i) {
   }
   if (e < r || e > l)
     return 0;
-  if (ce(t, e, n[0], n[2]))
+  if (me(t, e, n[0], n[2]))
     return i.value += 1, 0;
   if (e == l)
     return 0;
@@ -3436,8 +3436,8 @@ function sn(s, t, e, i) {
     n
   );
   for (let l = 0; l < r; ++l) {
-    let o = n.get(l), a = s[0].x, h = s[2].x - 2 * s[1].x + a, u = 2 * (s[1].x - a), c = me(h, u, a, o);
-    Z(t, c) && i.push(qe(s, o));
+    let o = n.get(l), a = s[0].x, h = s[2].x - 2 * s[1].x + a, u = 2 * (s[1].x - a), c = ye(h, u, a, o);
+    Z(t, c) && i.push(Fe(s, o));
   }
 }
 function nn(s, t, e, i) {
@@ -3495,7 +3495,7 @@ function yi(s, t, e, i, n, r) {
   let o = W.BuildUnitArc(t, e, i, l, n);
   return o == 0 && l.mapXY(e.x, e.y, r), o;
 }
-const ue = class ue {
+const fe = class fe {
   constructor() {
     d(this, "fPts", []);
     d(this, "fVerbs", []);
@@ -3551,7 +3551,7 @@ const ue = class ue {
     return this.fVerbs = t.fVerbs.slice(), this.fPts = t.fPts.map((e) => f.fromPoint(e)), this.fConicWeights = t.fConicWeights.slice(), this.fFillType = t.fFillType, this.fIsVolatile = t.fIsVolatile, this.fSegmentMask = t.fSegmentMask, this.fLastMovePoint.copy(t.fLastMovePoint), this.fLastMoveIndex = t.fLastMoveIndex, this;
   }
   clone() {
-    return ue.default().copy(this);
+    return fe.default().copy(this);
   }
   // 忽略第一个轮廓的最后一个点
   reversePathTo(t) {
@@ -4110,8 +4110,8 @@ const ue = class ue {
     return t.map((e) => e[0] + e.slice(1).join(" ")).join("");
   }
 };
-d(ue, "IsA", Vi);
-let Ct = ue;
+d(fe, "IsA", Vi);
+let Ct = fe;
 const di = (s) => {
   switch (s) {
     case g.kMove:
@@ -4127,7 +4127,7 @@ const di = (s) => {
       return 0;
   }
 };
-class Qe {
+class ze {
   constructor(t, e, i) {
     d(this, "fPts", []);
     d(this, "size", 0);
@@ -4142,19 +4142,19 @@ class Qe {
     return this.fCurrent = (this.fCurrent + t * this.fAdvance + this.fAdvance) % this.size, this.current;
   }
 }
-class rn extends Qe {
+class rn extends ze {
   constructor(t, e, i) {
     super(4, e, i);
     const n = t.centerX, r = t.centerY;
     this.fPts[0] = f.create(n, t.top), this.fPts[1] = f.create(t.right, r), this.fPts[2] = f.create(n, t.bottom), this.fPts[3] = f.create(t.left, r);
   }
 }
-class Pe extends Qe {
+class Pe extends ze {
   constructor(t, e, i) {
     super(4, e, i), this.fPts[0] = f.create(t.left, t.top), this.fPts[1] = f.create(t.right, t.top), this.fPts[2] = f.create(t.right, t.bottom), this.fPts[3] = f.create(t.left, t.bottom);
   }
 }
-class ln extends Qe {
+class ln extends ze {
   constructor(t, e, i) {
     super(8, e, i);
     const n = t.getBounds(), r = n.left, l = n.top, o = n.right, a = n.bottom, h = t.fRadii, u = yt.Corner.kUpperLeft_Corner, c = yt.Corner.kUpperRight_Corner, m = yt.Corner.kLowerRight_Corner, y = yt.Corner.kLowerLeft_Corner;
@@ -4236,7 +4236,7 @@ function on(s, t, e) {
   return Number(m.length ^ Number(n));
 }
 var an = /* @__PURE__ */ ((s) => (s.Miter = "miter", s.Round = "round", s.Bevel = "bevel", s.MiterClip = "miter-clip", s))(an || {}), hn = /* @__PURE__ */ ((s) => (s.Butt = "butt", s.Round = "round", s.Square = "square", s))(hn || {}), un = /* @__PURE__ */ ((s) => (s.NonZero = "nonzero", s.EvenOdd = "evenodd", s))(un || {});
-class Be {
+class Qe {
   constructor(t) {
     d(this, "isAutoClose", !1);
     d(this, "path");
@@ -4256,7 +4256,7 @@ class Be {
     return this.isAutoClose = t.isAutoClose, this.verbIndex = t.verbIndex, this.pointsIndex = t.pointsIndex, this.lastMoveTo.copy(t.lastMoveTo), this.lastPoint.copy(t.lastPoint), this;
   }
   clone() {
-    return new Be({
+    return new Qe({
       isAutoClose: this.isAutoClose,
       path: this.path,
       verbIndex: this.verbIndex,
@@ -4374,12 +4374,12 @@ const Ee = 0.707106781, Le = (s, t, e, i, n) => {
   ), n.lineTo(e.x, e.y));
 };
 function pi(s) {
-  return Math.abs(s) <= Ye;
+  return Math.abs(s) <= Ve;
 }
 function Yi(s) {
   return s >= 0 ? pi(1 - s) ? 3 : 2 : pi(1 + s) ? 0 : 1;
 }
-function Ve(s, t) {
+function Be(s, t) {
   return s.x * t.y > s.y * t.x;
 }
 function ae(s, t, e) {
@@ -4390,7 +4390,7 @@ const Di = (s, t, e, i, n, r, l, o, a) => {
     if (C = C.clone(), C.multiplyScalar(P), I = I.clone(), A = A.clone(), G) {
       I.normalize();
       let at = A.dot(I), tt = A.cross(I), K = 0;
-      Math.abs(tt) <= Ye ? K = 1 / B : K = (1 / B - at) / tt, A.multiplyScalar(P);
+      Math.abs(tt) <= Ve ? K = 1 / B : K = (1 / B - at) / tt, A.multiplyScalar(P);
       let wt = A.clone();
       wt.cw();
       let de = C.clone();
@@ -4423,7 +4423,7 @@ const Di = (s, t, e, i, n, r, l, o, a) => {
     );
     return;
   }
-  let k = !Ve(y, p);
+  let k = !Be(y, p);
   if (k && (a.swap(), y.negate(), p.negate()), c == 0 && n <= Ee) {
     x.addVectors(y, p).multiplyScalar(i), u(
       a,
@@ -4464,7 +4464,7 @@ const Di = (s, t, e, i, n, r, l, o, a) => {
   );
 }, yn = (s, t, e, i, n, r, l, o) => {
   let a = e.clone().multiplyScalar(i);
-  Ve(s, e) || (o.swap(), a.negate()), o.outer.lineTo(t.x + a.x, t.y + a.y), ae(t, a, o.inner);
+  Be(s, e) || (o.swap(), a.negate()), o.outer.lineTo(t.x + a.x, t.y + a.y), ae(t, a, o.inner);
 }, dn = (s, t, e, i, n, r, l, o) => Di(s, t, e, i, n, !1, r, l, o), pn = (s, t, e, i, n, r, l, o) => {
   Di(
     s,
@@ -4482,7 +4482,7 @@ const Di = (s, t, e, i, n, r, l, o, a) => {
   if (Yi(a) == 3)
     return;
   let u = s.clone(), c = e.clone(), m = F.kCW;
-  Ve(u, c) || (o.swap(), u.negate(), c.negate(), m = F.kCCW);
+  Be(u, c) || (o.swap(), u.negate(), c.negate(), m = F.kCCW);
   let y = ot.fromRows(i, 0, 0, i, t.x, t.y), p = new Array(5).fill(0).map(() => new W()), x = W.BuildUnitArc(u, c, m, y, p);
   if (x > 0) {
     p = p.slice(0, x);
@@ -4660,7 +4660,7 @@ const Pn = {
   butt: Le,
   round: cn,
   square: mn
-}, Sn = 3, ki = [15, 78, 33, 33], Ye = 1 / 4096;
+}, Sn = 3, ki = [15, 78, 33, 33], Ve = 1 / 4096;
 class Lr {
   constructor() {
     d(this, "radius", 0);
@@ -4852,7 +4852,7 @@ class Lr {
   // its perpendicular, and the perpendicular tangent.
   quadPerpRay(t, e, i, n, r) {
     let l = this, o = St(t, e);
-    i.set(o.x, o.y), o = qe(t, e);
+    i.set(o.x, o.y), o = Fe(t, e);
     let a = f.create(o.x, o.y);
     a.isZero() && (a = t[2].sub(t[0])), l.setRayPoints(i, a, n, r);
   }
@@ -4903,7 +4903,7 @@ class Lr {
   }
   lineTo(t, e) {
     const i = this;
-    let n = i.prev_pt.equalsEpsilon(t, Ye * i.inv_res_scale);
+    let n = i.prev_pt.equalsEpsilon(t, Ve * i.inv_res_scale);
     if (i.capper, Le && n || n && (i.join_completed || e && e.hasValidTangent()))
       return;
     let r = f.default(), l = f.default();
@@ -5068,7 +5068,7 @@ class Lr {
     let o = wi(t, e), a = Array.from({ length: 7 }, () => f.zero());
     if (o.x == 0 && o.y == 0) {
       let h = t;
-      nt(e) ? o = t[2].clone().sub(t[0]) : nt(1 - e) ? o = t[3].clone().sub(t[1]) : (fe(t, a, e), o = a[3].clone().sub(a[2]), o.x == 0 && o.y == 0 && (o = a[3].clone().sub(a[1]), h = a)), o.x == 0 && o.y == 0 && (o = h[3].clone().sub(h[0]));
+      nt(e) ? o = t[2].clone().sub(t[0]) : nt(1 - e) ? o = t[3].clone().sub(t[1]) : (ce(t, a, e), o = a[3].clone().sub(a[2]), o.x == 0 && o.y == 0 && (o = a[3].clone().sub(a[1]), h = a)), o.x == 0 && o.y == 0 && (o = h[3].clone().sub(h[0]));
     }
     l.setRayPoints(i, o, n, r);
   }
@@ -5079,7 +5079,7 @@ class Lr {
     const o = this;
     let a = 0;
     r == "miter" && (i <= 1 ? r = "bevel" : a = 1 / i), r == "miter-clip" && (a = 1 / i), o.res_scale = l, o.inv_res_scale = 1 / (l * 4), o.inv_res_scale_squared = o.inv_res_scale ** 2, o.radius = e * 0.5, o.inv_miter_limit = a, o.first_normal = f.default(), o.prev_normal = f.default(), o.first_unit_normal = f.default(), o.prev_unit_normal = f.default(), o.first_pt = f.default(), o.prev_pt = f.default(), o.first_outer_pt = f.default(), o.first_outer_pt_index_in_contour = 0, o.segment_count = -1, o.prev_is_line = !1, o.capper = Mn[n], o.joiner = Pn[r], o.inner.reset(), o.outer.reset(), o.cusper.reset(), o.stroke_type = 1, o.recursion_depth = 0, o.found_tangents = !1, o.join_completed = !1;
-    let h = !1, u = new Be({
+    let h = !1, u = new Qe({
       path: t,
       verbIndex: 0,
       pointsIndex: 0,
@@ -5175,38 +5175,38 @@ const _i = {
   Z: 0
 };
 new Set(Object.keys(_i).concat(Object.keys(_i).map((s) => s.toLowerCase())));
-function De(s, t, e) {
+function Ye(s, t, e) {
   return s >= t && s <= e;
 }
 function Oi(s) {
-  return De(s.charCodeAt(0), 1, 32);
+  return Ye(s.charCodeAt(0), 1, 32);
 }
 function ee(s) {
-  return De(s.charCodeAt(0), 48, 57);
+  return Ye(s.charCodeAt(0), 48, 57);
 }
 function ji(s) {
   return Oi(s) || s === ",";
 }
 function Ln(s) {
-  return De(s.charCodeAt(0), 97, 122);
+  return Ye(s.charCodeAt(0), 97, 122);
 }
 function An(s) {
   return String.fromCharCode(s.charCodeAt(0) - 97 + 65);
 }
-function ye(s) {
+function De(s) {
   let t = 0;
   for (; s.length > 0 && Oi(s[t]); )
     t++;
   return s.slice(t);
 }
-function Ne(s) {
+function he(s) {
   let t = 0;
   for (; s.length > 0 && ji(s[t]); )
     t++;
   return s.slice(t);
 }
 function Nn(s, t) {
-  s = ye(s);
+  s = De(s);
   let e = 0;
   for (e < s.length && (s[e] === "+" || s[e] === "-") && e++; e < s.length && ee(s[e]); )
     e++;
@@ -5219,18 +5219,18 @@ function Nn(s, t) {
   return e == 0 ? (t.value = s, 0) : (t.value = s.substring(e), Number(s.substring(0, e)));
 }
 function Xi(s, t) {
-  s = ye(s);
+  s = De(s);
   let e = { value: "" }, i = Nn(s, e);
   return s == e.value ? "" : (t && (t.value = i), e.value);
 }
 function vi(s, t, e, i) {
-  return s = Xi(s, t), e && (t.value += i), s = Ne(s), s;
+  return s = Xi(s, t), s ? (e && (t.value += i), s = he(s), s) : "";
 }
 function Wn(s, t, e) {
   if (e > 0) {
     let i = 0, n = { value: 0 };
     for (; s = Xi(s, n), t[i] = n.value, !(--e == 0 || s.length <= 0); )
-      s = ye(s), i++;
+      s = he(s), i++;
   }
   return s;
 }
@@ -5240,14 +5240,14 @@ function ft(s, t, e, i, n) {
       t[r] += n.x, t[r + 1] += n.y;
   return s;
 }
-function he(s, t) {
+function ue(s, t) {
   let e = { x: 0, y: 0 }, i = { x: 0, y: 0 }, n = { x: 0, y: 0 }, r = new Float32Array(7), l = { value: 0 }, o = "", a = "", h = !1;
-  for (; t.length && (t = ye(t), t[0] !== ""); ) {
+  for (; t.length && (t = De(t), t[0] !== ""); ) {
     let u = t[0];
     if (ee(u) || u === "-" || u === "+" || u === ".") {
       if (o == "" || o == "Z")
         return !1;
-    } else ji(u) || (o = u, h = !1, Ln(u) && (h = !0, o = An(u)), t = t.substring(1)), t = Ne(t);
+    } else ji(u) || (o = u, h = !1, Ln(u) && (h = !0, o = An(u)), t = t.substring(1)), t = he(t);
     switch (o) {
       case "M":
         t = ft(t, r, 2, h, i), s.moveTo(r[0], r[1]), a = "", o = "L", i.x = r[0], i.y = r[1];
@@ -5295,10 +5295,10 @@ class Zi {
     d(this, "commands", []);
     d(this, "dirty", !1);
     d(this, "_cb", null);
-    typeof t == "string" ? he(this, t) : t instanceof Zi && (this.commands = [...t.commands]);
+    typeof t == "string" ? ue(this, t) : t instanceof Zi && (this.commands = [...t.commands]);
   }
   fromSvgPath(t) {
-    he(this, t);
+    ue(this, t);
   }
   onChange(t) {
     this._cb = t;
@@ -5472,7 +5472,7 @@ function jn(s, t, e, i, n) {
 let Ar = class Hi {
   constructor(t) {
     d(this, "_path", Ct.default());
-    typeof t == "string" ? he(this, t) : t instanceof Hi && this._path.copy(t.getPath());
+    typeof t == "string" ? ue(this, t) : t instanceof Hi && this._path.copy(t.getPath());
   }
   static default() {
     return new this();
@@ -5481,7 +5481,7 @@ let Ar = class Hi {
     return new this(t);
   }
   fromSvgPath(t) {
-    he(this, t);
+    ue(this, t);
   }
   getPath() {
     return this._path;
@@ -5575,7 +5575,7 @@ export {
   Ue as PI,
   Ar as Path2D,
   Ct as PathBuilder,
-  Be as PathSegmentsIter,
+  Qe as PathSegmentsIter,
   Lr as PathStroker,
   f as Point,
   ie as Point3D,
@@ -5590,7 +5590,7 @@ export {
   hs as SK_ScalarMax,
   sr as SK_ScalarMin,
   lr as SK_ScalarNaN,
-  Fe as SK_ScalarNearlyZero,
+  We as SK_ScalarNearlyZero,
   rr as SK_ScalarNegativeInfinity,
   it as SK_ScalarPI,
   Ce as SK_ScalarRoot2Over2,
@@ -5603,7 +5603,7 @@ export {
   Sr as SkChopCubicAtHalf,
   Rr as SkChopCubicAtXExtrema,
   Ai as SkChopCubicAtYExtrema,
-  fe as SkChopCubicAt_3,
+  ce as SkChopCubicAt_3,
   Rs as SkChopCubicAt_4,
   Ei as SkChopCubicAt_5,
   vs as SkChopQuadAt,
@@ -5620,8 +5620,8 @@ export {
   re as SkEvalCubicPosAt,
   wi as SkEvalCubicTangentAt,
   St as SkEvalQuadAt,
-  qe as SkEvalQuadTangentAt,
-  ze as SkFindBisector,
+  Fe as SkEvalQuadTangentAt,
+  qe as SkFindBisector,
   qs as SkFindCubicCusp,
   le as SkFindCubicExtrema,
   Es as SkFindCubicInflections,
@@ -5677,7 +5677,7 @@ export {
   ur as SkScalarToDouble,
   ar as SkScalarToFloat,
   fs as SkScalarTruncToScalar,
-  We as SkScalarsAreFinite,
+  Ne as SkScalarsAreFinite,
   xs as SkScalarsAreFiniteArray,
   Ge as SkScalarsEqual,
   Zn as VectorIterator,

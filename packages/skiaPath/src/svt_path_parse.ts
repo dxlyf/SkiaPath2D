@@ -133,6 +133,9 @@ function findScalar(str: string, value: { value: number }) {
 }
 function findScalarSingle(str: string, value: { value: number }, isRelative: boolean, relative: number) {
     str = findScalar(str, value);
+    if (!str) {
+        return '';
+    }
     if (isRelative) {
         value.value += relative;
     }
@@ -151,7 +154,7 @@ function findScalars(str: string, value: Float32Array, count: number) {
                 break;
             }
             // keep going
-            str = skipWhitespace(str);
+            str = skipSeparator(str);
             i++
         }
     }
