@@ -9,7 +9,7 @@ PathBuilder:是核心类,移植自Skia的PathBuilder类，里面部分方法有�
 Path2D增加方法：ellipseArc、conicTo、contains
 
 ## 核心类
-有`PathBuilder``Path2D`,`PathStroker`,`ProxyPath2D`几个：
+有`PathBuilder``Path2D`,`PathStroker`,`PathStrokeDash`,`ProxyPath2D`几个：
 
 ### PathBuilder
 路径生成，核心代码移植自Skia的PathBuilder类，但更简化

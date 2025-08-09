@@ -131,9 +131,12 @@ gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
 gl.disableVertexAttribArray(0);  
 ```
 
-## PathStore效果
+## PathStore Effect
 ![在这里插入图片描述](./public/433333f65ce248f48a9004c8b0e9c29f.png)
 ## RoundRect
 ![在这里插入图片描述](./public/3fc7f55771044a6f828e64f88bc25a2e.png)
 ## ArcTo
 ![在这里插入图片描述](./public/56e0dcc89f394573a79e62b709cb563c.png)
+
+## PathStrokeDash Effect
+![alt text](./public/strokedash.png)
