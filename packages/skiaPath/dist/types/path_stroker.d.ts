@@ -41,6 +41,7 @@ export declare class PathSegmentsIter {
     });
     get curVerb(): PathVerb;
     get nextVerb(): PathVerb;
+    canNext(): boolean;
     copy(source: PathSegmentsIter): this;
     clone(): PathSegmentsIter;
     [Symbol.iterator](): Iterator<PathVerbData>;

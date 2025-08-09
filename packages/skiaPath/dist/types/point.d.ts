@@ -18,6 +18,8 @@ export declare class Point {
     set x(x: number);
     get y(): number;
     set y(y: number);
+    get halfX(): number;
+    get halfY(): number;
     set(x: number, y: number): this;
     clone(): Point;
     copy(p: Point): this;

@@ -73,6 +73,9 @@ export class PathSegmentsIter {
     get nextVerb() {
         return this.path.fVerbs[this.verbIndex]
     }
+    canNext(){
+        return this.verbIndex < this.path.fVerbs.length
+    }
     copy(source: PathSegmentsIter) {
         this.isAutoClose = source.isAutoClose
         this.verbIndex = source.verbIndex

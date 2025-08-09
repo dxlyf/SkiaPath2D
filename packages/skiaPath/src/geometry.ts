@@ -447,7 +447,7 @@ function SkEvalCubicPosAt(src: Point[], t: number, out: Point = Point.default())
     return out
 }
 
-function SkEvalCubicAt(src: Point[], t: number, loc: Point | null, tangent: Point | null, curvature: Point | null) {
+function SkEvalCubicAt(src: Point[], t: number, loc?: Point | null, tangent?: Point | null, curvature?: Point | null) {
 
     if (loc) {
         SkEvalCubicPosAt(src, t, loc)

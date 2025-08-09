@@ -43,6 +43,12 @@ export class Point {
     set y(y) {
         this.elements[1] = y
     }
+    get halfX(){
+        return this.elements[0] * 0.5
+    }
+    get halfY(){
+        return this.elements[1] * 0.5
+    }
     set(x: number, y: number) {
         if (this.x !== x || this.y !== y) {
             this.elements[0] = x;

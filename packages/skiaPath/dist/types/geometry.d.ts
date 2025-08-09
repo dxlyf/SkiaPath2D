@@ -44,7 +44,7 @@ declare function SkChopQuadAtYExtrema(src: Point[], dst: Point[]): number;
 declare function SkFindQuadMaxCurvature(src: Point[]): number;
 declare function SkEvalCubicTangentAt(src: Point[], t: number, tangent?: Point): Point;
 declare function SkEvalCubicPosAt(src: Point[], t: number, out?: Point): Point;
-declare function SkEvalCubicAt(src: Point[], t: number, loc: Point | null, tangent: Point | null, curvature: Point | null): void;
+declare function SkEvalCubicAt(src: Point[], t: number, loc?: Point | null, tangent?: Point | null, curvature?: Point | null): void;
 /** Cubic'(t) = At^2 + Bt + C, where
 A = 3(-a + 3(b - c) + d)
 B = 6(a - 2b + c)

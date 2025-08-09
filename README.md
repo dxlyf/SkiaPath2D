@@ -19,7 +19,7 @@ Additionally, a **Path2D** object is added to ensure compatibility with the brow
 - `contains`  
 
 ## Core Classes  
-Includes `PathBuilder`, `Path2D`, `PathStroker`, and `ProxyPath2D`:  
+Includes `PathBuilder`, `Path2D`, `PathStroker`,`PathStrokeDash`, and `ProxyPath2D`:  
 
 ### PathBuilder  
 Path generation, with core code ported from Skia's PathBuilder class but simplified.  
@@ -33,6 +33,9 @@ Additional methods:
 
 ### PathStroker  
 Generates stroke outlines from paths, with core code ported from Skia's PathStroker class.  
+
+### PathStrokeDash
+Generates dashed stroke outlines from paths, with core code ported from Skia's DashPath class.  
 
 ### ProxyPath2D  
 A lightweight proxy for `Path2D` that only stores commands and coordinates without generating actual rendering paths. For example:  
@@ -129,7 +132,6 @@ gl.disableVertexAttribArray(0);
 ```
 
 ## PathStore效果
-通过PathStroker 生成的描边轮廓与原生几乎一致
 ![在这里插入图片描述](./public/433333f65ce248f48a9004c8b0e9c29f.png)
 ## RoundRect
 ![在这里插入图片描述](./public/3fc7f55771044a6f828e64f88bc25a2e.png)

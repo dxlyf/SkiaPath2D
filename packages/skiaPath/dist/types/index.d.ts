@@ -6,6 +6,7 @@ export * from './path_builder';
 export * from './path_intersection';
 export * from './path_stroker';
 export * from './proxy_path2d';
+export * from './path_dash';
 export * from './path2d';
 export * from './point';
 export * from './quads';
