@@ -130,7 +130,6 @@ export declare class PathBuilder {
     computeTightBounds(): Rect;
     contains(x: number, y: number, fillRule?: CanvasFillRule): number | boolean;
     addPath(path: PathBuilder): this;
-    incReserve(extraPtCount: number, extraVerbCount?: number): void;
     transform(matrix: Matrix2D): this | undefined;
     getLastPt(lastPt?: Point): boolean;
     offset(dx: number, dy: number): void;

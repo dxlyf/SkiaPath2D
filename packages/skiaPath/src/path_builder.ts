@@ -508,7 +508,6 @@ export class PathBuilder {
         let conics = SkConic.make(5);
         let count = build_arc_conics(oval, startV, stopV, dir.value, conics, singlePt);
         if (count) {
-            this.incReserve(count * 2 + 1);
             const pt = conics[0].fPts[0];
             addPt(pt);
             for (let i = 0; i < count; ++i) {
@@ -635,7 +634,6 @@ export class PathBuilder {
             let conics = SkConic.make(kMaxConicsForArc);
             let count = build_arc_conics(oval, startV, stopV, dir.value, conics, singlePt);
             if (count) {
-                this.incReserve(count * 2 + 1);
                 const pt = conics[0].fPts[0];
                 addPt(pt);
                 for (let i = 0; i < count; ++i) {
@@ -817,11 +815,8 @@ export class PathBuilder {
     // Add a new contour
     addRect(rect: Rect, dir?: PathDirection): this
     addRect(rect: Rect, dir?: PathDirection, index?: number): this
-    addRect(rect: Rect, dir: PathDirection = PathDirection.kCW, index: number = 1) {
-        const kPts = 4;   // moveTo + 3 lines
-        const kVerbs = 5;   // moveTo + 3 lines + close
-        // this.incReserve(kPts, kVerbs);
-
+    addRect(rect: Rect, dir: PathDirection = PathDirection.kCW, index: number = 0) {
+  
         let iter = new RectPointIterator(rect, dir, index);
 
         this.moveTo(iter.current);
@@ -832,10 +827,6 @@ export class PathBuilder {
     }
     addOval(oval: Rect, dir: PathDirection = PathDirection.kCW, index: number = 0) {
         const prevIsA = this.fIsA;
-
-        const kPts = 9;   // moveTo + 4 conics(2 pts each)
-        const kVerbs = 6;   // moveTo + 4 conics + close
-        this.incReserve(kPts, kVerbs);
 
         let ovalIter = new OvalPointIterator(oval, dir, index);
         let rectIter = new RectPointIterator(oval, dir, index + (dir == PathDirection.kCW ? 0 : 1));
@@ -871,11 +862,6 @@ export class PathBuilder {
             // we start with a conic on odd indices when moving CW vs. even indices when moving CCW
             const startsWithConic = ((index & 1) == Number(dir == PathDirection.kCW));
             const weight = SK_ScalarRoot2Over2;
-
-            const kVerbs = startsWithConic
-                ? 9   // moveTo + 4x conicTo + 3x lineTo + close
-                : 10; // moveTo + 4x lineTo + 4x conicTo + close
-            this.incReserve(kVerbs);
 
             let rrectIter = new RRectPointIterator(rrect, dir, index);
             // Corner iterator indices follow the collapsed radii model,
@@ -1014,10 +1000,6 @@ export class PathBuilder {
             }
         }
         return this
-    }
-    // 扩充内存空间
-    incReserve(extraPtCount: number, extraVerbCount?: number) {
-
     }
     transform(matrix: Matrix2D) {
         if (matrix.isIdentity()) {

@@ -3763,7 +3763,6 @@ const pe = class pe {
     }
     let m = W.make(5), y = _i(t, o, a, u.value, m, h);
     if (y) {
-      this.incReserve(y * 2 + 1);
       const p = m[0].fPts[0];
       c(p);
       for (let x = 0; x < y; ++x)
@@ -3807,7 +3806,6 @@ const pe = class pe {
       }
       let v = W.make(Cs), M = _i(u, p, x, g.value, v, k);
       if (M) {
-        this.incReserve(M * 2 + 1);
         const P = v[0].fPts[0];
         _(P);
         for (let N = 0; N < M; ++N)
@@ -3889,17 +3887,16 @@ const pe = class pe {
     }
     return this.arcTo(t, e, i, !0);
   }
-  addRect(t, e = F.kCW, i = 1) {
+  addRect(t, e = F.kCW, i = 0) {
     let n = new Ie(t, e, i);
     return this.moveTo(n.current), this.lineTo(n.next()), this.lineTo(n.next()), this.lineTo(n.next()), this.close();
   }
   addOval(t, e = F.kCW, i = 0) {
     const n = this.fIsA;
-    this.incReserve(9, 6);
-    let o = new mn(t, e, i), a = new Ie(t, e, i + (e == F.kCW ? 0 : 1));
-    this.moveTo(o.current);
-    for (let u = 0; u < 4; ++u)
-      this.conicTo(a.next(), o.next(), Ae);
+    let r = new mn(t, e, i), l = new Ie(t, e, i + (e == F.kCW ? 0 : 1));
+    this.moveTo(r.current);
+    for (let o = 0; o < 4; ++o)
+      this.conicTo(l.next(), r.next(), Ae);
     return this.close(), n == 0 && (this.fIsA = 2, this.fIsACCW = e == F.kCCW, this.fIsAStart = i % 4), this;
   }
   addRRect(t, e = F.kCW, i = e == F.kCW ? 6 : 7) {
@@ -3909,18 +3906,17 @@ const pe = class pe {
     else if (t.isOval())
       this.addOval(r, e, i / 2);
     else {
-      const l = (i & 1) == +(e == F.kCW), o = Ae, a = l ? 9 : 10;
-      this.incReserve(a);
-      let u = new yn(t, e, i);
-      const h = i / 2 + (e == F.kCW ? 0 : 1);
-      let c = new Ie(r, e, h);
-      if (this.moveTo(u.current), l) {
-        for (let m = 0; m < 3; ++m)
-          this.conicTo(c.next(), u.next(), o), this.lineTo(u.next());
-        this.conicTo(c.next(), u.next(), o);
+      const l = (i & 1) == +(e == F.kCW), o = Ae;
+      let a = new yn(t, e, i);
+      const u = i / 2 + (e == F.kCW ? 0 : 1);
+      let h = new Ie(r, e, u);
+      if (this.moveTo(a.current), l) {
+        for (let c = 0; c < 3; ++c)
+          this.conicTo(h.next(), a.next(), o), this.lineTo(a.next());
+        this.conicTo(h.next(), a.next(), o);
       } else
-        for (let m = 0; m < 4; ++m)
-          this.lineTo(u.next()), this.conicTo(c.next(), u.next(), o);
+        for (let c = 0; c < 4; ++c)
+          this.lineTo(a.next()), this.conicTo(h.next(), a.next(), o);
       this.close();
     }
     return n == 0 && (this.fIsA = 3, this.fIsACCW = e == F.kCCW, this.fIsAStart = i % 8), this;
@@ -3996,9 +3992,6 @@ const pe = class pe {
           break;
       }
     return this;
-  }
-  // 扩充内存空间
-  incReserve(t, e) {
   }
   transform(t) {
     if (t.isIdentity())
