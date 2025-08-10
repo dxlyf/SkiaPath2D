@@ -1,7 +1,7 @@
 {
     "name": "skia-path2d",
     "private": false,
-    "version": "1.7.5",
+    "version": "1.7.6",
     "type": "module",
     "files": [
         "./dist",
@@ -15,7 +15,8 @@
     "exports": {
         ".": {
           "import": "./dist/skia-path2d.es.js",
-          "require": "./build/skia-path2d.cjs.js"
+          "require": "./dist/skia-path2d.cjs.js",
+          "types":"./dist/types/index.d.ts"
         }
       },
     "types": "dist/types/index.d.ts",
@@ -39,8 +40,6 @@
         "preview": "vite preview"
     },
     "peerDependencies": {
-        "vite": "^7.0.4",
-        "typescript": "*"
     },
     "devDependencies": {
 
