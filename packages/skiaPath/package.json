@@ -1,7 +1,7 @@
 {
     "name": "skia-path2d",
     "private": false,
-    "version": "1.7.4",
+    "version": "1.7.5",
     "type": "module",
     "files": [
         "./dist",
@@ -18,7 +18,7 @@
           "require": "./build/skia-path2d.cjs.js"
         }
       },
-    "types": "dist/index.d.ts",
+    "types": "dist/types/index.d.ts",
     "description": "Extract the core code related to Path2D, PathStrore, and isPointInPath from Skia and rewrite it with typescript",
     "repository": {
         "type": "git",

@@ -1,3 +1,4 @@
+export * from './arc'
 export * from './bezier_cubic'
 export * from './cubics'
 export * from './geometry'

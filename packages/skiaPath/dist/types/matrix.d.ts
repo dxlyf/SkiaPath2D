@@ -89,5 +89,5 @@ export declare class Matrix2D {
     equals(matrix: Matrix2D): boolean;
     equalsEpsilon(matrix: Matrix2D, epsilon?: number): boolean;
     fromArray(array: number[] | Float32Array, offset?: number): this;
-    toArray(array?: number[] | Float32Array, offset?: number): number[] | Float32Array<ArrayBufferLike>;
+    toArray(array?: number[] | Float32Array, offset?: number): Float32Array<ArrayBufferLike> | number[];
 }

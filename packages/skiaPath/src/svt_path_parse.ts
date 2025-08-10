@@ -391,7 +391,6 @@ export function pathFromSvgPath(path: Path2D, data: string) {
                 let x2 = points[5], y2 = points[6]
                 x2=relative?x2+c.x:x2;
                 y2=relative?y2+c.y:y2;
-
                 ellipseArcToCubicBezier(x0, y0, x2, y2, rx, ry, xAxisRotation, largeArcFlag, sweepFlag, (x0: number, y0: number, cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number, i: number) => {
                     path.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
                     c.x = x
