@@ -2,16 +2,12 @@ import { PathBuilder } from "./path_builder";
 import {PathDirection,PathVerb} from './path_types'
 import { Point as Vector2 } from './point'
 import { Matrix2D } from './matrix'
-// import { Conic,find_cubic_inflections, chop_cubic_at2,
-//      eval_cubic_tangent_at, find_cubic_cusp, find_unit_quad_roots,
-//       eval_quad_tangent_at, find_cubic_max_curvature, find_quad_max_curvature, eval_quad_at,
-//      eval_cubic_pos_at } from '../../curve/path_geomtry'
-
 import {SkConic,SkFindCubicInflections,SkChopCubicAt_3,SkEvalCubicTangentAt,SkFindCubicCusp,
     SkFindUnitQuadRoots,SkEvalQuadTangentAt,
     SkFindCubicMaxCurvature,SkFindQuadMaxCurvature,SkEvalQuadAt,
     SkEvalCubicPosAt
 } from './geometry'
+
 import { SkScalarNearlyZero } from './scalar'
 import { PointerArray } from "./util";
 
