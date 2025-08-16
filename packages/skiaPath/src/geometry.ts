@@ -1,6 +1,4 @@
 
-// 转换成js 
-
 import { Point, Point3D } from "./point";
 import { FloatPoint, Ref, PointerArray, sqrt, fabs, sk_ieee_float_divide, max, clamp, sk_double_to_float } from "./util";
 import { SkScalarIsNaN, SkScalarCos, SkScalarSqrt, SkScalarACos, SkScalarInvert, SkScalarNearlyZero, SkScalarPow, SkDoubleToScalar, SK_ScalarPI, SkScalarIsFinite, SkScalarAbs, SkScalarInterp, SkScalarsAreFinite, SK_ScalarHalf, SK_Scalar1, SkScalarLog2, SkScalarCeilToInt, SK_ScalarNearlyZero, SK_ScalarRoot2Over2 } from './scalar'
