@@ -6,8 +6,8 @@ export default defineConfig({
  
   plugins: [
     dts({
-     // entryRoot:"src",
-      outDir: 'dist/types',      // 指定输出目录
+      entryRoot:"./src",
+      outDir: './types',      // 指定输出目录
    // include: ['src'],          // 包含的源码
     //exclude: ['**/*.test.ts'], // 排除测试文件
   })],

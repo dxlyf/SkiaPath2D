@@ -1342,5 +1342,5 @@ export function pointInPath(x: number, y: number, path: PathBuilder) {
             }
         }
     } while (!done);
-    return Number(tangents.length ^ Number(isInverse));
+    return Boolean(tangents.length ^ Number(isInverse));
 }

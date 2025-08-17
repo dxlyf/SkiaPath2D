@@ -218,7 +218,9 @@ export class Path2D {
     fromSvgPath(d: string) {
         pathFromSvgPath(this, d)
     }
-
+    reset(){
+        this._path.reset()
+    }
     getPath() {
         return this._path;
     }

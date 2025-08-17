@@ -4275,7 +4275,7 @@ function gn(s, t, e) {
         }
     }
   } while (!o);
-  return Number(m.length ^ Number(n));
+  return !!(m.length ^ Number(n));
 }
 var _n = /* @__PURE__ */ ((s) => (s.Miter = "miter", s.Round = "round", s.Bevel = "bevel", s.MiterClip = "miter-clip", s))(_n || {}), vn = /* @__PURE__ */ ((s) => (s.Butt = "butt", s.Round = "round", s.Square = "square", s))(vn || {}), Tn = /* @__PURE__ */ ((s) => (s.NonZero = "nonzero", s.EvenOdd = "evenodd", s))(Tn || {});
 class be {

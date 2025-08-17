@@ -128,7 +128,7 @@ export declare class PathBuilder {
     addPolygon(pts: Point[], count: number, isClosed: boolean): this;
     getBounds(): Rect;
     computeTightBounds(): Rect;
-    contains(x: number, y: number, fillRule?: CanvasFillRule): number | boolean;
+    contains(x: number, y: number, fillRule?: CanvasFillRule): boolean;
     addPath(path: PathBuilder): this;
     transform(matrix: Matrix2D): this | undefined;
     getLastPt(lastPt?: Point): boolean;
@@ -146,5 +146,5 @@ export declare class PathBuilder {
     toPath2D(): Path2D;
     toSvgPath(): string;
 }
-export declare function pointInPath(x: number, y: number, path: PathBuilder): number | boolean;
+export declare function pointInPath(x: number, y: number, path: PathBuilder): boolean;
 export {};

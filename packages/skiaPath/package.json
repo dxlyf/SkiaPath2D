@@ -1,32 +1,35 @@
 {
     "name": "skia-path2d",
     "private": false,
-    "version": "1.7.6",
+    "version": "1.7.7",
     "type": "module",
     "files": [
         "./dist",
         "./index.js",
+        "./types",
+        "./public",
         "./package.json"
     ],
     "main": "index.js",
     "module": "dist/skia-path2d.es.js",
     "unpkg": "dist/skia-path2d.umd.js",
     "jsdelivr": "dist/skia-path2d.umd.js",
+    "types": "./types/index.d.ts",
     "exports": {
         ".": {
+          "types":"./types/index.d.ts",
           "import": "./dist/skia-path2d.es.js",
-          "require": "./dist/skia-path2d.cjs.js",
-          "types":"./dist/types/index.d.ts"
+          "require":"./dist/skia-path2d.cjs.js",
+          "default": "./dist/skia-path2d.umd.js"
         }
       },
-    "types": "dist/types/index.d.ts",
     "description": "Extract the core code related to Path2D, PathStrore, and isPointInPath from Skia and rewrite it with typescript",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/dxlyf/SkiaPath2D.git"
     },
     "keywords": [
-        "canvas","webgl","Path2D","skia","PathStroker","react","vue"
+        "canvas","webgl","webgpu","graphics","Path2D","skia","PathStroker","react","vue"
     ],
     "author": "fanyonglong",
     "license": "MIT",
