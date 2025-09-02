@@ -176,7 +176,7 @@ function winding_mono_cubic(pts: Point[], x: number, y: number, onCurveCount: Re
     }
 
     // quickreject or quickaccept
-    let min = Ref.from(0), max = Ref.from(0);
+    let min = Ref.from(Infinity), max = Ref.from(-Infinity);
     find_minmax(4, pts, min, max);
     if (x < min.value) {
         return 0;

@@ -3403,7 +3403,7 @@ function cn(s, t, e, i) {
     return i.value += 1, 0;
   if (e == r)
     return 0;
-  let o = E.from(0), a = E.from(0);
+  let o = E.from(1 / 0), a = E.from(-1 / 0);
   if (fn(4, s, o, a), t < o.value)
     return 0;
   if (t > a.value)
@@ -5819,6 +5819,9 @@ let tl = class ns {
   }
   fromSvgPath(t) {
     ye(this, t);
+  }
+  reset() {
+    this._path.reset();
   }
   getPath() {
     return this._path;

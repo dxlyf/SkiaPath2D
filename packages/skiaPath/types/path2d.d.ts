@@ -7,6 +7,7 @@ export declare class Path2D {
     _path: PathBuilder;
     constructor(pathOrCmd?: string | Path2D);
     fromSvgPath(d: string): void;
+    reset(): void;
     getPath(): PathBuilder;
     addPath(path2d: Path2D, transform?: Matrix2D): void;
     contains(x: number, y: number, fillRule?: CanvasFillRule): boolean;
