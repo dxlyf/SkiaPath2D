@@ -198,7 +198,9 @@ function rect(skpath: PathBuilder, x: number, y: number, width: number, height: 
     skpath.addRect(rect);
 }
 
-
+/**
+ * 一个类似于Canvas Path2D的路径类，基于 PathBuilder实现
+ */
 export class Path2D {
 
     static default() {

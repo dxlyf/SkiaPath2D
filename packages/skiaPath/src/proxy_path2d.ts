@@ -45,6 +45,9 @@ export interface IProxyPath2D {
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/roundRect) */
     roundRect(x: number, y: number, w: number, h: number, radii?: number | DOMPointInit | (number | DOMPointInit)[]): void;
 }
+/**
+ * 添加一个Path2D的代理类，可以记录Path2D的命令，并能导出为Path2D或绘制到CanvasRenderingContext2D上
+ */
 export class ProxyPath2D implements IProxyPath2D {
     commands: CommandData[] = [];
     dirty = false

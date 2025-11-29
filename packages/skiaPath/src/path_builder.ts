@@ -361,6 +361,7 @@ export class PathBuilder {
         } else {
             this.ensureMove()
             // 用三次贝塞尔曲线近似代替conicTo
+            // skia的conicTo是作为单独一个conic命令存在的，但这里用三次贝塞尔曲曲命令代替
             let lastPoint = this.lastPoint
             const ww = (4 * weight) / (3 * (1 + weight))
             let cp0X = lastPoint.x + (pt1.x - lastPoint.x) * ww
@@ -659,7 +660,7 @@ export class PathBuilder {
             }
             // If the current point and target point for the arc are identical, it should be treated as a
             // zero length path. This ensures continuity in animations.
-            if (srcPts[0] == srcPts[1]) {
+            if (srcPts[0].equals(srcPts[1])) {
                 return this.lineTo(endPt);
             }
             let rx = SkScalarAbs(rad.x);

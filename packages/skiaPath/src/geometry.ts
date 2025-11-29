@@ -143,7 +143,7 @@ function SkEvalQuadTangentAt(src: Point[], t: number): Point {
     // The derivative equation is 2(b - a +(a - 2b +c)t). This returns a
     // zero tangent vector when t is 0 or 1, and the control point is equal
     // to the end point. In this case, use the quad end points to compute the tangent.
-    if ((t == 0 && src[0] == src[1]) || (t == 1 && src[1] == src[2])) {
+    if ((t == 0 && src[0].equals(src[1])) || (t == 1 && src[1].equals(src[2]))) {
         return src[2].clone().subtract(src[0]);
     }
 
