@@ -1992,7 +1992,7 @@ function bt(s, t, e, i) {
   return e && e.copy(bt(s, t)), i && i.copy(Oe(s, t)), e || I(new _t(s).eval(T.splat(t)));
 }
 function Oe(s, t) {
-  if (t == 0 && s[0] == s[1] || t == 1 && s[1] == s[2])
+  if (t == 0 && s[0].equals(s[1]) || t == 1 && s[1].equals(s[2]))
     return s[2].clone().subtract(s[0]);
   let e = S(s[0]), i = S(s[1]), n = S(s[2]), r = i.clone().sub(e), o = n.clone().sub(i).sub(r).clone().mulScalar(t).add(r);
   return I(o.add(o));
@@ -3862,7 +3862,7 @@ const pe = class pe {
       let p = [this.lastPoint.clone(), y];
       if (!u.x || !u.y)
         return this.lineTo(y);
-      if (p[0] == p[1])
+      if (p[0].equals(p[1]))
         return this.lineTo(y);
       let x = j(u.x), g = j(u.y), k = p[0].clone().subtract(p[1]);
       k.multiplyScalar(0.5);

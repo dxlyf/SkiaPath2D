@@ -1,6 +1,9 @@
 import { PathBuilder } from './path_builder';
 import { Rect } from './rect';
 import { Matrix2D } from './matrix';
+/**
+ * 一个类似于Canvas Path2D的路径类，基于 PathBuilder实现
+ */
 export declare class Path2D {
     static default(): Path2D;
     static fromSvgPath(d: string): Path2D;
